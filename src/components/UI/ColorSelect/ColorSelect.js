@@ -14,6 +14,24 @@ import messages from './ColorSelect.messages';
 
 const colorSchemes = [
   {
+    name: 'Restore',
+    colors: [
+      '#f94c58',
+      '#d51a39',
+      '#a5131f',
+      '#e7f2f5',
+      '#0a9ecc',
+      '#0362a6',
+      '#eef5ee',
+      '#76ce82',
+      '#399a6f',
+      '#ffea6a',
+      '#ffc700',
+      '#a259ff',
+      '#ff7262'
+    ]
+  },
+  {
     name: 'Cboard',
     colors: ['#bbdefb', '#fff176', '#CE93D8', '#2196F3', '#4CAF50', '#E57373']
   },
