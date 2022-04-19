@@ -57,21 +57,21 @@
   right: 0;
   bottom: 0;
   left: 0;
-  border-radius: 3px;
-  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
+  border-radius: 16px;
+  box-shadow: 0px 6px 12px rgba(44, 147, 184, 0.07);
   z-index: -1;
 }
 
 .TileShape--folder::before {
   top: 10px;
-  border-radius: 0 3px 3px 3px;
+  border-radius: 0 16px 16px 16px;
 }
 
 .TileShape--folder::after {
   content: '';
   width: 50%;
   height: var(--folder-flap-height);
-  border-radius: 0 20px 0 0;
+  border-radius: 16px 16px 0 0;
   position: absolute;
   top: 0;
   left: 0;

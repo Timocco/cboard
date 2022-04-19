@@ -19,3 +19,5 @@ export const AZURE_VOICES_BASE_PATH_API =
   'https://' +
   AZURE_SPEECH_SERVICE_REGION +
   '.tts.speech.microsoft.com/cognitiveservices/voices/';
+export const GOOGLE_AUTH_ENABLED = false;
+export const FACEBOOK_AUTH_ENABLED = false;

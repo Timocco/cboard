@@ -19,7 +19,11 @@ import SignUp from '../Account/SignUp';
 import ResetPassword from '../Account/ResetPassword';
 import CboardLogo from './CboardLogo/CboardLogo.component';
 import './WelcomeScreen.css';
-import { API_URL } from '../../constants';
+import {
+  API_URL,
+  FACEBOOK_AUTH_ENABLED,
+  GOOGLE_AUTH_ENABLED
+} from '../../constants';
 import { isAndroid, isElectron } from '../../cordova-util';
 import { login } from '../Account/Login/Login.actions';
 
@@ -141,7 +145,7 @@ export class WelcomeScreen extends Component {
             </Button>
 
             <div className="WelcomeScreen__button WelcomeScreen__button">
-              {!isElectron() && (
+              {!isElectron() && GOOGLE_AUTH_ENABLED && (
                 <GoogleLoginButton
                   className="WelcomeScreen__button WelcomeScreen__button--google"
                   onClick={this.handleGoogleLoginClick}
@@ -150,7 +154,7 @@ export class WelcomeScreen extends Component {
                 </GoogleLoginButton>
               )}
 
-              {!isElectron() && (
+              {!isElectron() && FACEBOOK_AUTH_ENABLED && (
                 <FacebookLoginButton
                   className="WelcomeScreen__button WelcomeScreen__button--facebook"
                   onClick={this.handleFacebookLoginClick}

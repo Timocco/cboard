@@ -23,7 +23,7 @@ export class GridContainer extends PureComponent {
     breakpoints: colsRowsShape,
     gap: PropTypes.number,
     children: PropTypes.node,
-    edit: PropTypes.bool, 
+    edit: PropTypes.bool,
     onLayoutChange: PropTypes.func
   };
 
@@ -98,7 +98,15 @@ export class GridContainer extends PureComponent {
   };
 
   render() {
-    const { size, cols, gap, edit, breakpoints, children, onLayoutChange } = this.props;
+    const {
+      size,
+      cols,
+      gap,
+      edit,
+      breakpoints,
+      children,
+      onLayoutChange
+    } = this.props;
 
     return (
       <div className={classNames('Grid', { dragging: this.state.dragging })}>
