@@ -15,6 +15,7 @@ import Settings from '../Settings';
 import WelcomeScreen from '../WelcomeScreen';
 import Analytics from '../Analytics';
 import './App.css';
+import JwtSsoLogin from '../Account/JwtSsoLogin';
 
 export class App extends Component {
   static propTypes = {
@@ -72,6 +73,7 @@ export class App extends Component {
           <Route path="/analytics" component={Analytics} />
           <Route path="/activate/:url" component={Activate} />
           <Route path="/reset/:userid/:url" component={ChangePassword} />
+          <Route path="/sso/jwt/:token" component={JwtSsoLogin} />
           <Route path="/login/:type/callback" component={OAuthLogin} />
           <Route path="/board/:id" component={BoardContainer} />
           {isDownloadingLang && (
