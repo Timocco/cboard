@@ -144,6 +144,13 @@ class API {
     return data;
   }
 
+  async ssoLogin(type, jwtToken) {
+    const { data } = await this.axiosInstance.post('/user/login/jwt', {
+      token: jwtToken
+    });
+    return data;
+  }
+
   async forgot(email) {
     const { data } = await this.axiosInstance.post('/user/forgot', {
       email

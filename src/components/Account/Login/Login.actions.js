@@ -79,8 +79,19 @@ export function login({ email, password }, type = 'local') {
   };
 
   return async (dispatch, getState) => {
+    let apiMethod = '';
     try {
-      const apiMethod = type === 'local' ? 'login' : 'oAuthLogin';
+      switch (type) {
+        case 'local':
+          apiMethod = 'login';
+          break;
+        case 'ssoLogin':
+          apiMethod = 'ssoLogin';
+          break;
+        default:
+          apiMethod = 'oAuthLogin';
+      }
+      // const apiMethod = type === 'local' ? 'login' : 'oAuthLogin';
       const loginData = await API[apiMethod](email, password);
       const { communicator, board } = getState();
 
