@@ -29,8 +29,8 @@ jobs:
       - name: Download deps
         run: yarn install
 
-      - name: Run tests
-        run: yarn test
+      #- name: Run tests
+      #  run: yarn test
 
       - name: Build sources
         run: yarn build
