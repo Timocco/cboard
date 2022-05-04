@@ -1,0 +1,38 @@
+version: 0.2
+
+env:
+  variables:
+    CI: true
+    STAGE_S3_BUCKET: cboard.stage.restoreskills.com
+    STAGE_CDN_DISTRIBUTION_ID: E1OGVIYPO6PTAG
+
+phases:
+  install:
+    commands:
+      - yarn install
+  build:
+    commands:
+      # create RESTORE Cboard Stage build
+      - export REACT_APP_AZURE_INST_KEY='874487ac-304c-4160-b8f3-a221541eab61'
+      - export REACT_APP_AZURE_SPEECH_KEY='910a3256e6aa4b4daf631cd0f550c995'
+      - export REACT_APP_AZURE_SPEECH_SERVICE_REGION='eastus'
+      - CBOARD_ENV=stage yarn build
+      # backup for Stage deployment
+      - mv ./build ./build_stage
+      # create production build from the same code base
+      - export REACT_APP_AZURE_INST_KEY='874487ac-304c-4160-b8f3-a221541eab61'
+      - export REACT_APP_AZURE_SPEECH_KEY='910a3256e6aa4b4daf631cd0f550c995'
+      - export REACT_APP_AZURE_SPEECH_SERVICE_REGION='eastus'
+      - CBOARD_ENV=prod yarn build
+      # tarball for artifactory to deploy upon aproval
+      - tar -cvf ./restoreskills-cboard-latest.tar ./build
+  post_build:
+    commands:
+      # deploy RESTORE CBOARD STAGE
+      - aws s3 rm s3://$STAGE_S3_BUCKET --exclude content/* --recursive
+      - aws s3 cp ./build_stage s3://$STAGE_S3_BUCKET --recursive --cache-control 'no-cache'
+      - aws cloudfront create-invalidation --distribution-id $STAGE_CDN_DISTRIBUTION_ID --paths "/*"
+artifacts:
+  files:
+    - ./restoreskills-cboard-latest.tar
+    - ./production_buildspec.yml
