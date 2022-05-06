@@ -13,7 +13,7 @@ import PrintBoardButton from '../../UI/PrintBoardButton';
 import UserIcon from '../../UI/UserIcon';
 import LockToggle from '../../UI/LockToggle';
 import BackButton from '../../UI/BackButton';
-import AnalyticsButton from '../../UI/AnalyticsButton';
+//import AnalyticsButton from '../../UI/AnalyticsButton';
 import HelpButton from '../../UI/HelpButton';
 import SettingsButton from '../../UI/SettingsButton';
 import messages from '../Board.messages';
@@ -153,9 +153,9 @@ export class Navbar extends React.Component {
             <React.Fragment>
               <PrintBoardButton />
               {!isMobile.any && <FullScreenButton />}
-              {isLogged && !isCordova() && (
+              {/*isLogged && !isCordova() && (
                 <AnalyticsButton component={Link} to="/analytics" />
-              )}
+              )*/}
               <SettingsButton component={Link} to="/settings" />
               <BoardShare
                 label={intl.formatMessage(messages.share)}
