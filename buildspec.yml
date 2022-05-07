@@ -16,6 +16,7 @@ phases:
       - export REACT_APP_AZURE_INST_KEY='874487ac-304c-4160-b8f3-a221541eab61'
       - export REACT_APP_AZURE_SPEECH_KEY='910a3256e6aa4b4daf631cd0f550c995'
       - export REACT_APP_AZURE_SPEECH_SERVICE_REGION='eastus'
+      - export REACT_APP_DEV_API_URL="https://api-cboard.stage.restoreskills.com"
       - CBOARD_ENV=stage yarn build
       # backup for Stage deployment
       - mv ./build ./build_stage
@@ -23,6 +24,7 @@ phases:
       - export REACT_APP_AZURE_INST_KEY='874487ac-304c-4160-b8f3-a221541eab61'
       - export REACT_APP_AZURE_SPEECH_KEY='910a3256e6aa4b4daf631cd0f550c995'
       - export REACT_APP_AZURE_SPEECH_SERVICE_REGION='eastus'
+      - export REACT_APP_DEV_API_URL="https://api-cboard.restoreskills.com"
       - CBOARD_ENV=prod yarn build
       # tarball for artifactory to deploy upon aproval
       - tar -cvf ./restoreskills-cboard-latest.tar ./build
