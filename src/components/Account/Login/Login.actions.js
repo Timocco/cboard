@@ -91,7 +91,6 @@ export function login({ email, password }, type = 'local') {
         default:
           apiMethod = 'oAuthLogin';
       }
-      // const apiMethod = type === 'local' ? 'login' : 'oAuthLogin';
       const loginData = await API[apiMethod](email, password);
       const { communicator, board } = getState();
 
