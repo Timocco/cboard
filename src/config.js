@@ -1,6 +1,6 @@
 const R = require('ramda');
 
-const ENV_LIST = ['local', 'prod'];
+const ENV_LIST = ['local', 'stage', 'prod'];
 const CBOARD_ENV = process.env.CBOARD_ENV;
 
 // eslint-disable-next-line import/no-dynamic-require
