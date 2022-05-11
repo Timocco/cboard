@@ -1,0 +1,18 @@
+version: 0.2
+
+env:
+  variables:
+    PROD_CDN_DISTRIBUTION_ID: E3IEIGQUTOLN91
+    PROD_S3_BUCKET: cboard.production.restoreskills.com
+
+phases:
+  build:
+    commands:
+      # untarball production build file upon retireaval from artifactory
+      - tar -x -f restoreskills-cboard-latest.tar
+  post_build:
+    commands:
+      # deploy production artifact
+      - aws s3 rm s3://$PROD_S3_BUCKET --exclude content/* --recursive
+      - aws s3 cp ./build s3://$PROD_S3_BUCKET --recursive --cache-control 'no-cache'
+      - aws cloudfront create-invalidation --distribution-id $PROD_CDN_DISTRIBUTION_ID --paths "/*"
