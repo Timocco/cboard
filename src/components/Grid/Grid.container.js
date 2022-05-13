@@ -31,7 +31,7 @@ export class GridContainer extends PureComponent {
     cols: { lg: 6, md: 6, sm: 5, xs: 4, xxs: 3 },
     rows: { lg: 3, md: 3, sm: 3, xs: 3, xxs: 3 },
     breakpoints: GRID_BREAKPOINTS,
-    gap: 10,
+    gap: 30,
     edit: false
   };
 
