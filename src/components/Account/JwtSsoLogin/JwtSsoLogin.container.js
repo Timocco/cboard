@@ -33,9 +33,7 @@ class JwtSsoLoginContainer extends React.Component {
   }
 
   componentDidMount() {
-    if (!this.checkUser()) {
-      this.props.login({ email: this.type, password: this.token }, this.type);
-    }
+    this.props.login({ email: this.type, password: this.token }, this.type);
   }
 
   componentDidUpdate() {
@@ -47,8 +45,6 @@ class JwtSsoLoginContainer extends React.Component {
     if (user.email) {
       history.replace('/');
     }
-
-    return !!user.email;
   }
 
   render() {
