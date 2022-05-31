@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { FormattedMessage, injectIntl, intlShape } from 'react-intl';
-import { login } from '../Login/Login.actions';
+import { login, logout } from '../Login/Login.actions';
 import messages from './JwtSsoLogin.messages';
 import { getUser } from '../../App/App.selectors';
 import './JwtSsoLogin.css';
@@ -33,6 +33,10 @@ class JwtSsoLoginContainer extends React.Component {
   }
 
   componentDidMount() {
+    if (this.props.user.email) {
+      this.props.logout();
+    }
+
     this.props.login({ email: this.type, password: this.token }, this.type);
   }
 
@@ -58,11 +62,13 @@ class JwtSsoLoginContainer extends React.Component {
 }
 
 const mapStateToProps = state => ({
-  user: getUser(state)
+  user: getUser(state),
+  logout: logout
 });
 
 const mapDispatchToProps = {
-  login
+  login,
+  logout
 };
 
 export default connect(
