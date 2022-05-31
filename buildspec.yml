@@ -31,7 +31,7 @@ phases:
   post_build:
     commands:
       # deploy RESTORE CBOARD STAGE
-      - aws s3 rm s3://$STAGE_S3_BUCKET --exclude content/* --recursive
+      - aws s3 rm s3://$STAGE_S3_BUCKET --exclude user-media/* --recursive
       - aws s3 cp ./build_stage s3://$STAGE_S3_BUCKET --recursive --cache-control 'no-cache'
       - aws cloudfront create-invalidation --distribution-id $STAGE_CDN_DISTRIBUTION_ID --paths "/*"
 artifacts:
