@@ -9,6 +9,7 @@ import { isFirstVisit, isLogged } from './App.selectors';
 import messages from './App.messages';
 import App from './App.component';
 import { DISPLAY_SIZE_STANDARD } from '../Settings/Display/Display.constants';
+import MessageBus from '../../messageBus';
 
 export class AppContainer extends Component {
   static propTypes = {
@@ -40,6 +41,9 @@ export class AppContainer extends Component {
       this.handleNewContentAvailable,
       this.handleContentCached
     );
+    MessageBus.instance().emit('keepalive', {
+      session_id: window.cboardSessionId
+    });
   }
 
   handleNewContentAvailable = () => {

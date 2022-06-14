@@ -7,6 +7,7 @@ import 'react-grid-layout/css/styles.css';
 
 import './Grid.css';
 import { GRID_BREAKPOINTS } from './Grid.constants';
+import MessageBus from '../../messageBus';
 
 const colsRowsShape = PropTypes.shape({
   lg: PropTypes.number,
@@ -109,7 +110,14 @@ export class GridContainer extends PureComponent {
     } = this.props;
 
     return (
-      <div className={classNames('Grid', { dragging: this.state.dragging })}>
+      <div
+        className={classNames('Grid', { dragging: this.state.dragging })}
+        onClick={() =>
+          MessageBus.instance().emit('keepalive', {
+            session_id: window.cboardSessionId
+          })
+        }
+      >
         <ResponsiveReactGridLayout
           breakpoints={breakpoints}
           cols={cols}
