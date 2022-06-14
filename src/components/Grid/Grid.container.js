@@ -114,7 +114,7 @@ export class GridContainer extends PureComponent {
         className={classNames('Grid', { dragging: this.state.dragging })}
         onClick={() =>
           MessageBus.instance().emit('keepalive', {
-            session_id: window.cboardSessionId
+            websession_id: window.cboardSessionId
           })
         }
       >

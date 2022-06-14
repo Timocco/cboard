@@ -222,7 +222,7 @@ export class OutputContainer extends Component {
 
   handleOutputClick = event => {
     MessageBus.instance().emit('keepalive', {
-      session_id: window.cboardSessionId
+      websession_id: window.cboardSessionId
     });
     const targetEl = event.target;
     if (targetEl.tagName.toLowerCase() === 'div') {

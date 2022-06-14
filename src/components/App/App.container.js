@@ -42,7 +42,7 @@ export class AppContainer extends Component {
       this.handleContentCached
     );
     MessageBus.instance().emit('keepalive', {
-      session_id: window.cboardSessionId
+      websession_id: window.cboardSessionId
     });
   }
 
