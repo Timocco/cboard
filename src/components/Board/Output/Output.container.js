@@ -15,6 +15,7 @@ import {
 
 import { changeOutput, clickOutput, changeLiveMode } from '../Board.actions';
 import SymbolOutput from './SymbolOutput';
+import MessageBus from '../../../messageBus';
 
 function translateOutput(output, intl) {
   const translatedOutput = output.map(value => {
@@ -220,6 +221,9 @@ export class OutputContainer extends Component {
   };
 
   handleOutputClick = event => {
+    MessageBus.instance().emit('keepalive', {
+      websession_id: window.cboardSessionId
+    });
     const targetEl = event.target;
     if (targetEl.tagName.toLowerCase() === 'div') {
       this.play();
