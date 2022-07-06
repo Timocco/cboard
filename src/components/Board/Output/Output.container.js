@@ -286,7 +286,12 @@ export class OutputContainer extends Component {
   };
 
   render() {
-    const { output, navigationSettings, isLiveMode } = this.props;
+    const {
+      output,
+      navigationSettings,
+      isLiveMode,
+      increaseOutputButtons
+    } = this.props;
     const tabIndex = output.length ? '0' : '-1';
     return (
       <SymbolOutput
@@ -301,6 +306,7 @@ export class OutputContainer extends Component {
         isLiveMode={isLiveMode}
         tabIndex={tabIndex}
         navigationSettings={navigationSettings}
+        increaseOutputButtons={increaseOutputButtons}
         phrase={this.handlePhraseToShare()}
         onWriteSymbol={this.handleWriteSymbol}
       />
@@ -312,7 +318,8 @@ const mapStateToProps = ({ board, app }) => {
   return {
     output: board.output,
     isLiveMode: board.isLiveMode,
-    navigationSettings: app.navigationSettings
+    navigationSettings: app.navigationSettings,
+    increaseOutputButtons: app.displaySettings.increaseOutputButtons
   };
 };
 
