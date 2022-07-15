@@ -30,14 +30,6 @@ import { isCordova, isAndroid } from '../../cordova-util';
 import './Settings.css';
 import { CircularProgress } from '@material-ui/core';
 
-import { Adsense } from '@ctrl/react-adsense';
-import {
-  ADSENSE_ON_PRODUCTION,
-  ADTEST_AVAILABLE,
-  ADSENSE_CLIENT,
-  ADD_SLOT_SETTINGS_TOP
-} from '../../constants';
-
 const propTypes = {
   isLogged: PropTypes.bool.isRequired,
   logout: PropTypes.func.isRequired,
@@ -222,26 +214,6 @@ export class Settings extends PureComponent {
           )
         }
       >
-        {!isCordova() && (
-          <Paper className="Settings__section">
-            <Adsense
-              style={{
-                display: 'block',
-                height: '30vh',
-                maxHeight: '198px'
-              }}
-              client={ADSENSE_CLIENT}
-              slot={ADD_SLOT_SETTINGS_TOP}
-              data-adtest={ADSENSE_ON_PRODUCTION ? 'off' : 'on'}
-              format="none"
-              className={
-                ADSENSE_ON_PRODUCTION || ADTEST_AVAILABLE
-                  ? null
-                  : 'adSense__test__marker'
-              }
-            />
-          </Paper>
-        )}
         {(isDownloadingLang && (
           <div className="Settings__spinner-container">
             <CircularProgress
