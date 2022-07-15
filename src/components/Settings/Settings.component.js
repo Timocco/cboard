@@ -21,11 +21,10 @@ import LiveHelpIcon from '@material-ui/icons/LiveHelp';
 import messages from './Settings.messages';
 import SettingsSection from './SettingsSection.component';
 import FullScreenDialog from '../UI/FullScreenDialog';
-import Paper from '@material-ui/core/Paper';
 import UserIcon from '../UI/UserIcon';
 import SettingsTour from './SettingsTour.component';
 
-import { isCordova, isAndroid } from '../../cordova-util';
+import { isAndroid } from '../../cordova-util';
 
 import './Settings.css';
 import { CircularProgress } from '@material-ui/core';
