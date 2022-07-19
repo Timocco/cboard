@@ -11,6 +11,17 @@
       "hidden": false,
       "tiles": [
         {
+          "label": "Restore",
+          "vocalization": "Restore",
+          "image": "/symbols/restore/controllers.svg",
+          "loadBoard": "",
+          "sound": "",
+          "type": "button",
+          "backgroundColor": "rgb(239, 142, 150)",
+          "linkedBoard": false,
+          "id": "RMdlH6CMI"
+        },
+        {
           "labelKey": "cboard.symbol.yes",
           "image": "/symbols/mulberry/correct.svg",
           "id": "HJVQMR9pX5F-",
