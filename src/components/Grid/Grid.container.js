@@ -7,7 +7,7 @@ import 'react-grid-layout/css/styles.css';
 
 import './Grid.css';
 import { GRID_BREAKPOINTS } from './Grid.constants';
-import MessageBus from '../../messageBus';
+import MessageBus from '@timocco/messagebus';
 
 const colsRowsShape = PropTypes.shape({
   lg: PropTypes.number,
@@ -18,6 +18,11 @@ const colsRowsShape = PropTypes.shape({
 });
 
 export class GridContainer extends PureComponent {
+  constructor(props) {
+    super(props);
+    this.messageBus = new MessageBus();
+  }
+
   static propTypes = {
     cols: colsRowsShape,
     rows: colsRowsShape,
@@ -113,7 +118,7 @@ export class GridContainer extends PureComponent {
       <div
         className={classNames('Grid', { dragging: this.state.dragging })}
         onClick={() =>
-          MessageBus.instance().emit('keepalive', {
+          this.messageBus.publish('keepalive', {
             websession_id: window.cboardSessionId
           })
         }

@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { injectIntl, intlShape } from 'react-intl';
+import MessageBus from '@timocco/messagebus';
 
 import registerServiceWorker from '../../registerServiceWorker';
 import { showNotification } from '../Notifications/Notifications.actions';
@@ -9,9 +10,13 @@ import { isFirstVisit, isLogged } from './App.selectors';
 import messages from './App.messages';
 import App from './App.component';
 import { DISPLAY_SIZE_STANDARD } from '../Settings/Display/Display.constants';
-import MessageBus from '../../messageBus';
 
 export class AppContainer extends Component {
+  constructor(props) {
+    super(props);
+    this.messageBus = new MessageBus();
+  }
+
   static propTypes = {
     /**
      * App language direction
@@ -41,7 +46,7 @@ export class AppContainer extends Component {
       this.handleNewContentAvailable,
       this.handleContentCached
     );
-    MessageBus.instance().emit('keepalive', {
+    this.messageBus.publish('keepalive', {
       websession_id: window.cboardSessionId
     });
   }

@@ -4,6 +4,7 @@ import { injectIntl, intlShape } from 'react-intl';
 import { connect } from 'react-redux';
 import keycode from 'keycode';
 import shortid from 'shortid';
+import MessageBus from '@timocco/messagebus';
 import messages from '../Board.messages';
 import { showNotification } from '../../Notifications/Notifications.actions';
 import { isAndroid } from '../../../cordova-util';
@@ -15,7 +16,6 @@ import {
 
 import { changeOutput, clickOutput, changeLiveMode } from '../Board.actions';
 import SymbolOutput from './SymbolOutput';
-import MessageBus from '../../../messageBus';
 
 function translateOutput(output, intl) {
   const translatedOutput = output.map(value => {
@@ -30,6 +30,11 @@ function translateOutput(output, intl) {
 }
 
 export class OutputContainer extends Component {
+  constructor(props) {
+    super(props);
+    this.messageBus = new MessageBus();
+  }
+
   static propTypes = {
     /**
      * @ignore
@@ -221,7 +226,7 @@ export class OutputContainer extends Component {
   };
 
   handleOutputClick = event => {
-    MessageBus.instance().emit('keepalive', {
+    this.messageBus.publish('keepalive', {
       websession_id: window.cboardSessionId
     });
     const targetEl = event.target;
