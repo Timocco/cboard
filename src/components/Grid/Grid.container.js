@@ -118,9 +118,7 @@ export class GridContainer extends PureComponent {
       <div
         className={classNames('Grid', { dragging: this.state.dragging })}
         onClick={() =>
-          this.messageBus.publish('keepalive', {
-            websession_id: window.cboardSessionId
-          })
+          this.messageBus.publish('keepalive', window.cboardSessionId)
         }
       >
         <ResponsiveReactGridLayout

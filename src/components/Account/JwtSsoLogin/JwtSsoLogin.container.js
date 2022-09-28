@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { FormattedMessage, injectIntl, intlShape } from 'react-intl';
+import { v4 as uuidv4 } from 'uuid';
 import { login, logout } from '../Login/Login.actions';
 import messages from './JwtSsoLogin.messages';
 import { getUser } from '../../App/App.selectors';
@@ -38,6 +39,7 @@ class JwtSsoLoginContainer extends React.Component {
     }
 
     this.props.login({ email: this.type, password: this.token }, this.type);
+    window.cboardSessionId = uuidv4();
   }
 
   componentDidUpdate() {

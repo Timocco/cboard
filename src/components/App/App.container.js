@@ -46,9 +46,7 @@ export class AppContainer extends Component {
       this.handleNewContentAvailable,
       this.handleContentCached
     );
-    this.messageBus.publish('keepalive', {
-      websession_id: window.cboardSessionId
-    });
+    this.messageBus.publish('keepalive', window.cboardSessionId);
   }
 
   handleNewContentAvailable = () => {

@@ -226,9 +226,7 @@ export class OutputContainer extends Component {
   };
 
   handleOutputClick = event => {
-    this.messageBus.publish('keepalive', {
-      websession_id: window.cboardSessionId
-    });
+    this.messageBus.publish('keepalive', window.cboardSessionId);
     const targetEl = event.target;
     if (targetEl.tagName.toLowerCase() === 'div') {
       this.play();
