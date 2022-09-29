@@ -26,7 +26,7 @@
     "@redux-beacon/google-analytics-gtag": "^1.1.0",
     "@redux-beacon/logger": "^1.0.0",
     "@redux-beacon/offline-web": "^1.0.0",
-    "@timocco/messagebus": "^1.0.6",
+    "@restore/messagebus": "^1.0.8",
     "axios": "^0.26.1",
     "browser-image-resizer": "^1.2.0",
     "dom-to-image": "^2.6.0",
@@ -135,6 +135,8 @@
     ]
   },
   "scripts": {
+    "preinstall": "npm run co:login",
+    "co:login": "aws codeartifact login --tool npm --repository Restore --domain restore",
     "analyze": "source-map-explorer build/static/js/**/*.js",
     "start": "PORT=3001 react-scripts start",
     "build": "react-scripts build && sw-precache --config=sw-precache-config.js",
