@@ -25,9 +25,13 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
           cache: 'yarn'
+          registry-url: 'https://npm.pkg.github.com'
+          scope: '@timocco'
 
       - name: Download deps
         run: yarn install
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       #- name: Run tests
       #  run: yarn test
