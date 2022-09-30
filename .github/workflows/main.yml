@@ -27,6 +27,9 @@ jobs:
           aws-region: us-east-1
           role-to-assume: ${{ secrets.AWS_CODE_ARTIFACT_READ_ROLE }}
 
+      - name: Authenticate to Restore CodeArtifacts
+        run: aws codeartifact login --tool npm --repository Restore --domain restore
+
       - name: Checkout repo
         uses: actions/checkout@v3
 
