@@ -4,7 +4,7 @@ import { injectIntl, intlShape } from 'react-intl';
 import { connect } from 'react-redux';
 import keycode from 'keycode';
 import shortid from 'shortid';
-import MessageBus from '@timocco/messagebus';
+import MessageBus from '@restore/messagebus';
 import messages from '../Board.messages';
 import { showNotification } from '../../Notifications/Notifications.actions';
 import { isAndroid } from '../../../cordova-util';
