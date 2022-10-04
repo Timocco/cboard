@@ -7,7 +7,7 @@ import 'react-grid-layout/css/styles.css';
 
 import './Grid.css';
 import { GRID_BREAKPOINTS } from './Grid.constants';
-import MessageBus from '@timocco/messagebus';
+import MessageBus from '@restore/messagebus';
 
 const colsRowsShape = PropTypes.shape({
   lg: PropTypes.number,

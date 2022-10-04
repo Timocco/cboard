@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { injectIntl, intlShape } from 'react-intl';
-import MessageBus from '@timocco/messagebus';
+import MessageBus from '@restore/messagebus';
 
 import registerServiceWorker from '../../registerServiceWorker';
 import { showNotification } from '../Notifications/Notifications.actions';

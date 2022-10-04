@@ -9,7 +9,7 @@ env:
 phases:
   install:
     commands:
-      - yarn install
+      - yarn install --ignore-scripts
   build:
     commands:
       # create RESTORE Cboard Stage build
