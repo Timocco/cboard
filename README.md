@@ -36,7 +36,7 @@ In order to pull the latest translations from CrowdIn into the codebase, you can
 
 ### Dependency Installation
 
-Webcore uses packages from the Restore package repository. Before installing dependencies, run the following command to authenticate with the private repository:
+Our Cboard uses packages from the Restore package repository. Before installing dependencies, run the following command to authenticate with the private repository:
 
 ```bash
 npm run auth
