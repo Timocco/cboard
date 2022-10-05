@@ -7,9 +7,13 @@ env:
     STAGE_CDN_DISTRIBUTION_ID: E1OGVIYPO6PTAG
 
 phases:
+  pre_build:
+    on-failure: ABORT
+    commands: aws codeartifact login --tool npm --domain restore --domain-owner 211905799377 --repository Restore
+
   install:
     commands:
-      - yarn install --ignore-scripts
+      - yarn install
   build:
     commands:
       # create RESTORE Cboard Stage build

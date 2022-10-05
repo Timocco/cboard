@@ -135,8 +135,7 @@
     ]
   },
   "scripts": {
-    "preinstall": "npm run co:login",
-    "co:login": "aws codeartifact login --tool npm --repository Restore --domain restore",
+    "auth": "aws codeartifact login --tool npm --repository Restore --domain restore",
     "analyze": "source-map-explorer build/static/js/**/*.js",
     "start": "PORT=3001 react-scripts start",
     "build": "react-scripts build && sw-precache --config=sw-precache-config.js",
