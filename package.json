@@ -1,6 +1,6 @@
 {
   "name": "cboard",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Cboard is an augmentative and alternative communication (AAC) web application, allowing users with speech and language impairments (autism, cerebral palsy) to communicate by symbols and text-to-speech.",
   "keywords": [
     "aac",
