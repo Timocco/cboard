@@ -8,8 +8,10 @@ env:
 
 phases:
   install:
+    on-failure: ABORT
     commands:
-      - yarn install --ignore-scripts
+      - aws codeartifact login --tool npm --domain restore --domain-owner 211905799377 --repository Restore
+      - yarn install
   build:
     commands:
       # create RESTORE Cboard Stage build

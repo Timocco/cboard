@@ -37,7 +37,7 @@ jobs:
         uses: actions/setup-node@v3
 
       - name: Download deps
-        run: yarn install --no-scripts
+        run: yarn install
 
       - name: Build sources
         run: yarn build
