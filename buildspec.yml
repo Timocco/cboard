@@ -7,12 +7,10 @@ env:
     STAGE_CDN_DISTRIBUTION_ID: E1OGVIYPO6PTAG
 
 phases:
-  pre_build:
-    on-failure: ABORT
-    commands: aws codeartifact login --tool npm --domain restore --domain-owner 211905799377 --repository Restore
-
   install:
+    on-failure: ABORT
     commands:
+      - aws codeartifact login --tool npm --domain restore --domain-owner 211905799377 --repository Restore
       - yarn install
   build:
     commands:
