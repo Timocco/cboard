@@ -10,7 +10,7 @@ phases:
   install:
     on-failure: ABORT
     commands:
-      - aws codeartifact login --tool npm --domain restore --domain-owner 211905799377 --repository Restore
+      - aws codeartifact login --tool npm --domain restore --namespace @restore --domain-owner 211905799377 --repository Restore
       - yarn install
   build:
     commands:
