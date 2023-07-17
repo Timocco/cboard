@@ -24,7 +24,7 @@ import SettingsSection from './SettingsSection.component';
 import FullScreenDialog from '../UI/FullScreenDialog';
 import UserIcon from '../UI/UserIcon';
 import SettingsTour from './SettingsTour.component';
-import { isAndroid, isElectron, isIOS } from '../../cordova-util';
+import { isAndroid, isIOS } from '../../cordova-util';
 
 import './Settings.css';
 import { CircularProgress } from '@material-ui/core';
