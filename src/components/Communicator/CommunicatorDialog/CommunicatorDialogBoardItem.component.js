@@ -232,7 +232,10 @@ class CommunicatorDialogBoardItem extends React.Component {
   };
 
   handleSymbolSearchChange = ({ image }) => {
-    this.setState({ imageBoard: image });
+    return new Promise(resolve => {
+      this.setState({ imageBoard: image });
+      resolve();
+    });
   };
 
   handleSymbolSearchClose = event => {
@@ -364,6 +367,21 @@ class CommunicatorDialogBoardItem extends React.Component {
       this.state.imageBoard.search('/') === 0
         ? `.${this.state.imageBoard}`
         : this.state.imageBoard;
+
+    const PublishBoardButton = (
+      <IconButton
+        label={
+          board.isPublic
+            ? intl.formatMessage(messages.menuUnpublishOption)
+            : intl.formatMessage(messages.menuPublishOption)
+        }
+        onClick={() => {
+          this.handleBoardPublishOpen(board);
+        }}
+      >
+        {board.isPublic ? <KeyIcon /> : <PublicIcon />}
+      </IconButton>
+    );
 
     const ReportBoardDialog = () => {
       const ReportSuccesContent = (
@@ -874,18 +892,9 @@ class CommunicatorDialogBoardItem extends React.Component {
                       <InputIcon />
                     )}
                   </IconButton>
-                  <IconButton
-                    label={
-                      board.isPublic
-                        ? intl.formatMessage(messages.menuUnpublishOption)
-                        : intl.formatMessage(messages.menuPublishOption)
-                    }
-                    onClick={() => {
-                      this.handleBoardPublishOpen(board);
-                    }}
-                  >
-                    {board.isPublic ? <KeyIcon /> : <PublicIcon />}
-                  </IconButton>
+                  {board.description || board.isPublic
+                    ? { PublishBoardButton }
+                    : PublishBoardButton}
                   <Dialog
                     onClose={this.handleDialogClose.bind(this)}
                     aria-labelledby="board-publish-dialog"

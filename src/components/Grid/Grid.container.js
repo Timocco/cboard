@@ -47,6 +47,38 @@ export class GridContainer extends PureComponent {
 
   grid = null;
 
+  componentDidMount() {
+    if (this.props.isBigScrollBtns) this.configBigScrollBtns();
+  }
+
+  configBigScrollBtns() {
+    const { breakpoints, size, cols, setIsScroll, rows, children } = this.props;
+    const breakPoint = this.getBreakpointFromWidth(breakpoints, size.width);
+    const currentLayout = this.generateLayout(cols[breakPoint]);
+
+    const isScroll =
+      currentLayout.length / cols[breakPoint] > rows[breakPoint] ? true : false;
+    const totalRows = Math.ceil(children.length / cols[breakPoint]);
+    setIsScroll(isScroll, totalRows);
+  }
+
+  getBreakpointFromWidth(breakpoints, width) {
+    const sortBreakpoints = breakpoints => {
+      let keys = Object.keys(breakpoints);
+      return keys.sort(function(a, b) {
+        return breakpoints[a] - breakpoints[b];
+      });
+    };
+
+    const sorted = sortBreakpoints(breakpoints);
+    let matching = sorted[0];
+    for (let i = 1, len = sorted.length; i < len; i++) {
+      let breakpointName = sorted[i];
+      if (width > breakpoints[breakpointName]) matching = breakpointName;
+    }
+    return matching;
+  }
+
   calcRowHeight(height) {
     // todo: rewrite this with variable caching
     const breakpoints = ['lg', 'md', 'sm', 'xs', 'xxs'];
@@ -88,10 +120,10 @@ export class GridContainer extends PureComponent {
   generateLayouts() {
     const { breakpoints, cols } = this.props;
     const layouts = {};
-
     Object.keys(breakpoints).forEach(bp => {
       layouts[bp] = this.generateLayout(cols[bp]);
     });
+
     return layouts;
   }
 

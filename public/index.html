@@ -12,6 +12,7 @@
     default-src 'self'
         'unsafe-inline'
         'unsafe-eval'
+        https://*
         http://localhost:3000/
         http://localhost:3001/
         http://localhost:8080/
@@ -28,9 +29,13 @@
         https://www.youtube.com/
         https://*.cloudfront.net/
         https://*.visualstudio.com/
-        https://*.microsoft.com/cognitiveservices/
+        http://www.googletagmanager.com/gtag/js
+        ws://localhost:3000/
+        wss://localhost:3000/
+        ws://192.168.0.109:3000/
+        wss://192.168.0.109:3000/
         wss://*.microsoft.com/cognitiveservices/
-        blob: 
+        blob:
         gap:
         data:;
     img-src * data:  filesystem:  blob:  ;
@@ -50,7 +55,7 @@
 
       Unlike "/favicon.ico" or "favicon.ico", "%PUBLIC_URL%/favicon.ico" will
       work correctly both with client-side routing and a non-root public URL.
-      Learn how to configure a non-root public URL by running `npm run build`.
+      Learn how to configure a non-root public URL by running `yarn build`.
     -->
 
     <!-- Add to homescreen for Chrome on Android -->
