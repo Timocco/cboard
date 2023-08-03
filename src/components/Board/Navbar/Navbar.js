@@ -17,7 +17,7 @@ import BackButton from '../../UI/BackButton';
 import HelpButton from '../../UI/HelpButton';
 import SettingsButton from '../../UI/SettingsButton';
 import messages from '../Board.messages';
-import { isCordova, isAndroid } from '../../../cordova-util';
+import { isCordova, isAndroid, isIOS } from '../../../cordova-util';
 import './Navbar.css';
 import { injectIntl } from 'react-intl';
 
@@ -151,11 +151,9 @@ export class Navbar extends React.Component {
         <div className="Navbar__group Navbar__group--end">
           {!isLocked && (
             <React.Fragment>
-              <PrintBoardButton />
+              {!isIOS() && <PrintBoardButton />}
               {!isMobile.any && <FullScreenButton />}
-              {/*isLogged && !isCordova() && (
-                <AnalyticsButton component={Link} to="/analytics" />
-              )*/}
+
               <SettingsButton component={Link} to="/settings" />
               <BoardShare
                 label={intl.formatMessage(messages.share)}

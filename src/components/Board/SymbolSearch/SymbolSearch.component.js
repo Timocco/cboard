@@ -6,17 +6,18 @@ import classNames from 'classnames';
 import isMobile from 'ismobilejs';
 import queryString from 'query-string';
 import debounce from 'lodash/debounce';
+import { IconButton, Tooltip } from '@material-ui/core';
+import BackspaceIcon from '@material-ui/icons/Backspace';
 
 import API from '../../../api';
 import { ARASAAC_BASE_PATH_API } from '../../../constants';
+import { getArasaacDB } from '../../../idb/arasaac/arasaacdb';
 import FullScreenDialog from '../../UI/FullScreenDialog';
 import FilterBar from '../../UI/FilterBar';
 import Symbol from '../Symbol';
 import { LABEL_POSITION_BELOW } from '../../Settings/Display/Display.constants';
 import messages from './SymbolSearch.messages';
 import './SymbolSearch.css';
-import { IconButton, Tooltip } from '@material-ui/core';
-import BackspaceIcon from '@material-ui/icons/Backspace';
 
 const SymbolSets = {
   mulberry: '0',
@@ -54,7 +55,8 @@ export class SymbolSearch extends PureComponent {
 
   static defaultProps = {
     open: false,
-    maxSuggestions: 16
+    maxSuggestions: 16,
+    autoFill: ''
   };
 
   constructor(props) {
@@ -145,27 +147,54 @@ export class SymbolSearch extends PureComponent {
       return [];
     }
     try {
-      const data = await API.arasaacPictogramsSearch(locale, searchText);
-      if (data.length) {
+      const arasaacDB = await getArasaacDB();
+      const imagesFromDB = await arasaacDB.getImagesByKeyword(
+        searchText.trim()
+      );
+      if (imagesFromDB.length) {
         const suggestions = [
           ...this.state.suggestions.filter(
             suggestion => !suggestion.fromArasaac
           )
         ];
-        const arasaacSuggestions = data.map(
-          ({ _id: idPictogram, keywords: [keyword] }) => {
-            return {
-              id: keyword.keyword,
-              src: `${ARASAAC_BASE_PATH_API}pictograms/${idPictogram}?${queryString.stringify(
-                { skin, hair }
-              )}`,
-              translatedId: keyword.keyword,
-              fromArasaac: true
-            };
-          }
-        );
+        const arasaacSuggestions = imagesFromDB.map(({ src, label, id }) => {
+          return {
+            id,
+            src: `${ARASAAC_BASE_PATH_API}pictograms/${id}?${queryString.stringify(
+              { skin, hair }
+            )}`,
+            keyPath: id,
+            translatedId: label,
+            fromArasaac: true
+          };
+        });
         this.setState({ suggestions: [...suggestions, ...arasaacSuggestions] });
+      } else {
+        const data = await API.arasaacPictogramsSearch(locale, searchText);
+        if (data.length) {
+          const suggestions = [
+            ...this.state.suggestions.filter(
+              suggestion => !suggestion.fromArasaac
+            )
+          ];
+          const arasaacSuggestions = data.map(
+            ({ _id: idPictogram, keywords: [keyword] }) => {
+              return {
+                id: keyword.keyword,
+                src: `${ARASAAC_BASE_PATH_API}pictograms/${idPictogram}?${queryString.stringify(
+                  { skin, hair }
+                )}`,
+                translatedId: keyword.keyword,
+                fromArasaac: true
+              };
+            }
+          );
+          this.setState({
+            suggestions: [...suggestions, ...arasaacSuggestions]
+          });
+        }
       }
+
       return [];
     } catch (err) {
       return [];
@@ -226,20 +255,36 @@ export class SymbolSearch extends PureComponent {
 
   debouncedGetSuggestions = debounce(this.getSuggestions, 300);
 
-  handleSuggestionsFetchRequested = async ({ value }) => {
+  handleSuggestionsFetchRequested = async ({ value, reason }) => {
+    if (reason === 'suggestion-selected') return;
     this.debouncedGetSuggestions(value);
   };
 
   handleSuggestionsClearRequested = () => {};
 
-  handleSuggestionSelected = (event, { suggestion }) => {
+  handleSuggestionSelected = async (event, { suggestion }) => {
     const { onChange, onClose, autoFill } = this.props;
     this.setState({ value: '' });
 
     const label = autoFill.length ? autoFill : suggestion.translatedId;
 
+    const fetchArasaacImageUrl = async () => {
+      const suggestionImageReq = `${suggestion.src}&url=true`;
+      const imageArasaacUrl = await API.arasaacPictogramsGetImageUrl(
+        suggestionImageReq
+      );
+      return imageArasaacUrl.length ? imageArasaacUrl : suggestion.src;
+    };
+
+    const symbolImage = suggestion.fromArasaac
+      ? await fetchArasaacImageUrl()
+      : suggestion.src;
+
+    const keyPath = suggestion.keyPath ? suggestion.keyPath : undefined;
+
     onChange({
-      image: suggestion.src,
+      image: symbolImage,
+      keyPath: keyPath,
       label: label,
       labelKey: undefined
     }).then(() => onClose());
@@ -261,6 +306,7 @@ export class SymbolSearch extends PureComponent {
         <Symbol
           label={suggestion.translatedId}
           image={suggestion.src}
+          keyPath={suggestion.keyPath}
           labelpos={LABEL_POSITION_BELOW}
         />
       </div>

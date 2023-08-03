@@ -2,7 +2,7 @@ import JSZip from 'jszip';
 import axios from 'axios';
 import moment from 'moment';
 import pdfMake from 'pdfmake/build/pdfmake';
-import pdfFonts from 'pdfmake/build/vfs_fonts';
+import pdfFonts from '../../../vfs_fonts';
 import { saveAs } from 'file-saver';
 import {
   EXPORT_CONFIG_BY_TYPE,
@@ -32,6 +32,27 @@ import mongoose from 'mongoose';
 import * as utils from '../../../components/FixedGrid/utils';
 
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
+// Add all supported fonts for languages
+pdfMake.fonts = {
+  Khmer: {
+    normal: 'Khmer-Regular.ttf',
+    bold: 'Khmer-Regular.ttf'
+  },
+  Roboto: {
+    normal: 'Roboto-Regular.ttf',
+    bold: 'Roboto-Medium.ttf',
+    italics: 'Roboto-Italic.ttf',
+    bolditalics: 'Roboto-MediumItalic.ttf'
+  },
+  Tajawal: {
+    normal: 'Tajawal-Regular.ttf',
+    bold: 'Tajawal-Bold.ttf'
+  },
+  THSarabunNew: {
+    normal: 'THSarabunNew.ttf',
+    bold: 'THSarabunNew.ttf'
+  }
+};
 
 const imageElement = new Image();
 
@@ -330,7 +351,7 @@ async function toDataURL(url, styles = {}, outputFormat = 'image/jpeg') {
   });
 }
 
-async function generatePDFBoard(board, intl, breakPage = true) {
+async function generatePDFBoard(board, intl, breakPage = true, picsee = false) {
   const header = board.name || '';
   const columns =
     board.isFixed && board.grid ? board.grid.columns : CBOARD_COLUMNS;
@@ -352,8 +373,8 @@ async function generatePDFBoard(board, intl, breakPage = true) {
   }
 
   const grid = board.isFixed
-    ? await generateFixedBoard(board, rows, columns, intl, table)
-    : await generateNonFixedBoard(board, rows, columns, intl, table);
+    ? await generateFixedBoard(board, rows, columns, intl, picsee)
+    : await generateNonFixedBoard(board, rows, columns, intl, picsee);
 
   const lastGridRowDiff = columns - grid[grid.length - 2].length; // labels row
   if (lastGridRowDiff > 0) {
@@ -378,7 +399,7 @@ function chunks(array, size) {
   return results;
 }
 
-async function generateFixedBoard(board, rows, columns, intl) {
+async function generateFixedBoard(board, rows, columns, intl, picsee = false) {
   let currentRow = 0;
   let cont = 0;
 
@@ -430,7 +451,8 @@ async function generateFixedBoard(board, rows, columns, intl) {
           rows,
           columns,
           currentRow,
-          pageBreak
+          pageBreak,
+          picsee
         );
         cont++;
       }
@@ -439,7 +461,13 @@ async function generateFixedBoard(board, rows, columns, intl) {
   return grid;
 }
 
-async function generateNonFixedBoard(board, rows, columns, intl) {
+async function generateNonFixedBoard(
+  board,
+  rows,
+  columns,
+  intl,
+  picsee = false
+) {
   // Do a grid with 2n rows
   const grid = new Array(Math.ceil(board.tiles.length / columns) * 2);
   let currentRow = 0;
@@ -448,7 +476,16 @@ async function generateNonFixedBoard(board, rows, columns, intl) {
     // Wait for previous tile
     await prev;
     currentRow = i >= (currentRow + 1) * columns ? currentRow + 1 : currentRow;
-    return await addTileToGrid(tile, intl, grid, rows, columns, currentRow);
+    return await addTileToGrid(
+      tile,
+      intl,
+      grid,
+      rows,
+      columns,
+      currentRow,
+      false,
+      picsee
+    );
   }, Promise.resolve());
   return grid;
 }
@@ -460,7 +497,8 @@ const addTileToGrid = async (
   rows,
   columns,
   currentRow,
-  pageBreak = false
+  pageBreak = false,
+  picsee = false
 ) => {
   const { label, image } = getPDFTileData(tile, intl);
   const fixedRow = currentRow * 2;
@@ -497,13 +535,59 @@ const addTileToGrid = async (
     alignment: 'center'
   };
 
-  if (11 === columns || columns === 12 || rows >= 6) {
-    imageData.width = '59';
-    labelData.fontSize = 9;
-  } else if (9 === columns || columns === 10 || rows === 5) {
-    imageData.width = '70';
-  } else if (7 === columns || columns === 8) {
-    imageData.width = '90';
+  if (picsee) {
+    // This scales down images to fit inside PicseePal
+    // dimensions depending on number of columns
+    var colImgWidths = {
+      1: 130,
+      2: 130,
+      3: 80,
+      4: 84,
+      5: 75,
+      6: 60,
+      7: 55,
+      8: 55,
+      9: 45,
+      10: 45,
+      11: 40,
+      12: 37
+      // max num of columns is 12
+    };
+    var rowImgWidths = {
+      1: 130,
+      2: 130,
+      3: 86,
+      4: 59,
+      5: 45,
+      6: 33,
+      7: 32,
+      8: 26,
+      9: 21,
+      10: 17,
+      11: 14,
+      12: 11
+      // max num of rows is 12
+    };
+
+    imageData.width = Math.min(colImgWidths[columns], rowImgWidths[rows]);
+
+    if (imageData.width <= 37) {
+      labelData.fontSize = 7;
+    } else if (imageData.width <= 40) {
+      labelData.fontSize = 8;
+    } else if (imageData.width <= 45) {
+      labelData.fontSize = 9;
+    }
+  } else {
+    // if not picseepal PDF, then retain old method for computing image widths
+    if (11 === columns || columns === 12 || rows >= 6) {
+      imageData.width = '59';
+      labelData.fontSize = 9;
+    } else if (9 === columns || columns === 10 || rows === 5) {
+      imageData.width = '70';
+    } else if (7 === columns || columns === 8) {
+      imageData.width = '90';
+    }
   }
 
   const displaySettings = getDisplaySettings();
@@ -742,18 +826,93 @@ export async function cboardExportAdapter(allBoards = [], board) {
   }
 }
 
-export async function pdfExportAdapter(boards = [], intl) {
+export async function pdfExportAdapter(boards = [], intl, picsee = false) {
+  // change font according to locale
+  let font = 'Roboto';
+  switch (intl?.locale) {
+    case 'km':
+      font = 'Khmer';
+      break;
+    case 'ar':
+      font = 'Tajawal';
+      break;
+    case 'th':
+      font = 'THSarabunNew';
+      break;
+    default:
+      font = 'Roboto';
+  }
+
   const docDefinition = {
     pageSize: 'A4',
     pageOrientation: 'landscape',
     pageMargins: [20, 20],
-    content: []
+    content: [],
+    defaultStyle: {
+      font: font
+    }
   };
+  if (picsee) {
+    docDefinition.background = function() {
+      return {
+        stack: [
+          {
+            text: [
+              {
+                text: '\nPicseePal compatible PDF',
+                fontSize: 18,
+                alignment: 'center',
+                bold: true
+              }
+            ]
+          },
+          {
+            canvas: [
+              {
+                // rectangle showing PicseePal viewable area
+                type: 'rect',
+                x: 137.5,
+                y: 48,
+                w: 567,
+                h: 374.22,
+                r: 5,
+                lineColor: 'black'
+              },
+              {
+                // dashed line rectangle to cut
+                type: 'rect',
+                x: 101.65,
+                y: 11.5,
+                w: 638.7,
+                h: 447,
+                r: 55,
+                dash: { length: 5 },
+                lineColor: 'black'
+              }
+            ]
+          },
+          {
+            text: [
+              {
+                text: `\nPlease print on A4 / US Letter paper at 100% scale.
+                          Cut along dashed line before inserting into PicseePal device.`,
+                fontSize: 15,
+                alignment: 'center'
+              }
+            ]
+          }
+        ]
+      };
+    };
+
+    docDefinition.pageMargins = [144, 93, 144, 130];
+  }
+
   const lastBoardIndex = boards.length - 1;
   const content = await boards.reduce(async (prev, board, i) => {
     const prevContent = await prev;
     const breakPage = i !== lastBoardIndex;
-    const boardPDFData = await generatePDFBoard(board, intl, breakPage);
+    const boardPDFData = await generatePDFBoard(board, intl, breakPage, picsee);
     return prevContent.concat(boardPDFData);
   }, Promise.resolve([]));
 
