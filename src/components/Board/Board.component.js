@@ -32,9 +32,6 @@ import messages from './Board.messages';
 
 import './Board.css';
 import BoardTour from './BoardTour/BoardTour';
-import ScrollButtons from '../ScrollButtons';
-import { NAVIGATION_BUTTONS_STYLE_SIDES } from '../Settings/Navigation/Navigation.constants';
-
 export class Board extends Component {
   static propTypes = {
     board: PropTypes.shape({
@@ -97,10 +94,7 @@ export class Board extends Component {
     isRootBoardTourEnabled: PropTypes.bool,
     isUnlockedTourEnabled: PropTypes.bool,
     disableTour: PropTypes.func,
-    copiedTiles: PropTypes.arrayOf(PropTypes.object),
-    setIsScroll: PropTypes.func,
-    isScroll: PropTypes.bool,
-    totalRows: PropTypes.number
+    copiedTiles: PropTypes.arrayOf(PropTypes.object)
   };
 
   static defaultProps = {
@@ -124,9 +118,6 @@ export class Board extends Component {
       openTitleDialog: false,
       titleDialogValue: props.board && props.board.name ? props.board.name : ''
     };
-
-    this.boardContainerRef = React.createRef();
-    this.fixedBoardContainerRef = React.createRef();
   }
 
   componentDidMount() {
@@ -139,10 +130,7 @@ export class Board extends Component {
     const { onTileClick, isSelecting } = this.props;
 
     if (tile.loadBoard && !isSelecting) {
-      const boardComponentRef = this.props.board.isFixed
-        ? 'fixedBoardContainerRef'
-        : 'boardContainerRef';
-      this[boardComponentRef].current.scrollTop = 0;
+      this.tiles.scrollTop = 0;
     }
     onTileClick(tile);
   };
@@ -219,7 +207,6 @@ export class Board extends Component {
             <Symbol
               image={tile.image}
               label={tile.label}
-              keyPath={tile.keyPath}
               labelpos={displaySettings.labelPosition}
             />
 
@@ -262,7 +249,6 @@ export class Board extends Component {
         <Symbol
           image={tile.image}
           label={tile.label}
-          keyPath={tile.keyPath}
           labelpos={displaySettings.labelPosition}
         />
 
@@ -311,20 +297,12 @@ export class Board extends Component {
       isUnlockedTourEnabled,
       disableTour,
       onCopyTiles,
-      onPasteTiles,
-      setIsScroll,
-      isScroll,
-      totalRows,
-      changeDefaultBoard
+      onPasteTiles
     } = this.props;
 
     const tiles = this.renderTiles(board.tiles);
     const cols = DISPLAY_SIZE_GRID_COLS[this.props.displaySettings.uiSize];
     const isLoggedIn = !!userData.email;
-    const isNavigationButtonsOnTheSide =
-      navigationSettings.navigationButtonsStyle === undefined ||
-      navigationSettings.navigationButtonsStyle ===
-        NAVIGATION_BUTTONS_STYLE_SIDES;
 
     return (
       <Scanner
@@ -343,8 +321,7 @@ export class Board extends Component {
             isRootBoardTourEnabled={isRootBoardTourEnabled}
             isUnlockedTourEnabled={isUnlockedTourEnabled}
             disableTour={disableTour}
-            intl={intl}
-            onDefaultBoardOptionClick={changeDefaultBoard}
+            intl
           />
           <Scannable>
             <div
@@ -422,108 +399,67 @@ export class Board extends Component {
             onPasteTiles={onPasteTiles}
             copiedTiles={this.props.copiedTiles}
           />
-          <div className="BoardSideButtonsContainer">
-            {navigationSettings.caBackButtonActive && (
-              <NavigationButtons
-                active={
-                  navigationSettings.caBackButtonActive &&
-                  !isSelecting &&
-                  (!isSaving || isNavigationButtonsOnTheSide) &&
-                  !this.props.scannerSettings.active
-                }
-                navHistory={this.props.navHistory}
-                previousBoard={onRequestPreviousBoard}
-                toRootBoard={onRequestToRootBoard}
-                isSaving={isSaving}
-                isNavigationButtonsOnTheSide={isNavigationButtonsOnTheSide}
-              />
-            )}
-            <Scannable>
-              <div
-                id="BoardTilesContainer"
-                className={classNames('Board__tiles', {
-                  ScrollButtonsOnTheSides:
-                    navigationSettings.bigScrollButtonsActive &&
-                    isNavigationButtonsOnTheSide
-                })}
-                onKeyUp={this.handleBoardKeyUp}
-                ref={this.boardContainerRef}
-              >
-                {!board.isFixed &&
-                  (tiles.length ? (
-                    <Grid
-                      board={board}
-                      edit={isSelecting && !isSaving}
-                      cols={cols}
-                      onLayoutChange={onLayoutChange}
-                      setIsScroll={setIsScroll}
-                      isBigScrollBtns={
-                        navigationSettings.bigScrollButtonsActive
-                      }
-                    >
-                      {tiles}
-                    </Grid>
-                  ) : (
-                    <EmptyBoard />
-                  ))}
 
-                {board.isFixed && (
-                  <FixedGrid
-                    order={board.grid ? board.grid.order : []}
-                    items={board.tiles}
-                    columns={
-                      board.grid ? board.grid.columns : DEFAULT_COLUMNS_NUMBER
-                    }
-                    rows={board.grid ? board.grid.rows : DEFAULT_ROWS_NUMBER}
-                    dragAndDropEnabled={isSelecting}
-                    renderItem={item => this.renderTileFixedBoard(item)}
-                    onItemDrop={onTileDrop}
-                    fixedRef={this.fixedBoardContainerRef}
-                    setIsScroll={setIsScroll}
-                    isBigScrollBtns={navigationSettings.bigScrollButtonsActive}
-                    isNavigationButtonsOnTheSide={isNavigationButtonsOnTheSide}
-                  />
-                )}
+          <Scannable>
+            <div
+              id="BoardTilesContainer"
+              className="Board__tiles"
+              onKeyUp={this.handleBoardKeyUp}
+              ref={ref => {
+                this.tiles = ref;
+              }}
+            >
+              {!board.isFixed &&
+                (tiles.length ? (
+                  <Grid
+                    board={board}
+                    edit={isSelecting && !isSaving}
+                    cols={cols}
+                    onLayoutChange={onLayoutChange}
+                  >
+                    {tiles}
+                  </Grid>
+                ) : (
+                  <EmptyBoard />
+                ))}
 
-                <EditGridButtons
-                  active={
-                    isFixedBoard && isSelecting && !isSaving ? true : false
-                  }
+              {board.isFixed && (
+                <FixedGrid
+                  order={board.grid ? board.grid.order : []}
+                  items={board.tiles}
                   columns={
                     board.grid ? board.grid.columns : DEFAULT_COLUMNS_NUMBER
                   }
                   rows={board.grid ? board.grid.rows : DEFAULT_ROWS_NUMBER}
-                  onAddRemoveRow={onAddRemoveRow}
-                  onAddRemoveColumn={onAddRemoveColumn}
-                  moveColsButtonToLeft={
-                    navigationSettings.bigScrollButtonsActive &&
-                    isNavigationButtonsOnTheSide
-                  }
+                  dragAndDropEnabled={isSelecting}
+                  renderItem={item => this.renderTileFixedBoard(item)}
+                  onItemDrop={onTileDrop}
                 />
-              </div>
-            </Scannable>
+              )}
 
-            {navigationSettings.bigScrollButtonsActive && (
-              <ScrollButtons
-                active={
-                  navigationSettings.bigScrollButtonsActive &&
-                  (!isSaving || isNavigationButtonsOnTheSide) &&
-                  !this.props.scannerSettings.active &&
-                  (isScroll || isNavigationButtonsOnTheSide)
+              <EditGridButtons
+                active={isFixedBoard && isSelecting && !isSaving ? true : false}
+                columns={
+                  board.grid ? board.grid.columns : DEFAULT_COLUMNS_NUMBER
                 }
-                isScroll={isScroll}
-                isSaving={isSaving}
-                boardContainer={
-                  board.isFixed
-                    ? this.fixedBoardContainerRef
-                    : this.boardContainerRef
-                }
-                totalRows={totalRows}
-                boardId={board.id}
-                isNavigationButtonsOnTheSide={isNavigationButtonsOnTheSide}
+                rows={board.grid ? board.grid.rows : DEFAULT_ROWS_NUMBER}
+                onAddRemoveRow={onAddRemoveRow}
+                onAddRemoveColumn={onAddRemoveColumn}
               />
-            )}
-          </div>
+            </div>
+          </Scannable>
+
+          <NavigationButtons
+            active={
+              navigationSettings.caBackButtonActive &&
+              !isSelecting &&
+              !isSaving &&
+              !this.props.scannerSettings.active
+            }
+            navHistory={this.props.navHistory}
+            previousBoard={onRequestPreviousBoard}
+            toRootBoard={onRequestToRootBoard}
+          />
 
           <Dialog
             open={this.state.openTitleDialog}

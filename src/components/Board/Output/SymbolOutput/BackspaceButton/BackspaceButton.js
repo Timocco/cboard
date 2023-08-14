@@ -5,8 +5,24 @@ import IconButton from '@material-ui/core/IconButton';
 import BackspaceIcon from '@material-ui/icons/Backspace';
 import { Scannable } from 'react-scannable';
 
+const styles = {
+  button: {
+    alignSelf: 'center',
+    height: '64px',
+    width: '64px'
+  },
+  icon: {
+    height: '32px',
+    width: '32px'
+  }
+};
+
 export class BackspaceButton extends Component {
   static propTypes = {
+    /**
+     * @ignore
+     */
+    classes: PropTypes.object,
     /**
      * @ignore
      */
@@ -16,29 +32,23 @@ export class BackspaceButton extends Component {
   };
 
   render() {
-    const { theme, hidden, increaseOutputButtons, ...other } = this.props;
+    const { classes, theme, hidden, ...other } = this.props;
 
     const backspaceIconStyle =
       theme.direction === 'ltr' ? null : { transform: 'scaleX(-1)' };
+
     return (
       <Scannable disabled={hidden}>
         <IconButton
           aria-label="Backspace"
-          className={
-            increaseOutputButtons ? 'Output__button__lg' : 'Output__button__sm'
-          }
+          className={classes.button}
           {...other}
         >
-          <BackspaceIcon
-            className={
-              increaseOutputButtons ? 'Output__icon__lg' : 'Output__icon__sm'
-            }
-            style={backspaceIconStyle}
-          />
+          <BackspaceIcon className={classes.icon} style={backspaceIconStyle} />
         </IconButton>
       </Scannable>
     );
   }
 }
 
-export default withStyles(null, { withTheme: true })(BackspaceButton);
+export default withStyles(styles, { withTheme: true })(BackspaceButton);

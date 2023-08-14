@@ -46,8 +46,7 @@ import {
   getApiObjects,
   downloadImages,
   createApiBoard,
-  upsertApiBoard,
-  changeDefaultBoard
+  upsertApiBoard
 } from './Board.actions';
 import {
   upsertCommunicator,
@@ -66,14 +65,7 @@ import {
 import { NOTIFICATION_DELAY } from '../Notifications/Notifications.constants';
 import { EMPTY_VOICES } from '../../providers/SpeechProvider/SpeechProvider.constants';
 import { DEFAULT_ROWS_NUMBER, DEFAULT_COLUMNS_NUMBER } from './Board.constants';
-import {
-  IS_BROWSING_FROM_APPLE_TOUCH,
-  IS_BROWSING_FROM_SAFARI
-} from '../../constants';
 //import { isAndroid } from '../../cordova-util';
-
-const ogv = require('ogv');
-ogv.OGVLoader.base = process.env.PUBLIC_URL + '/ogv';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -181,8 +173,7 @@ export class BoardContainer extends Component {
     lang: PropTypes.string,
     isRootBoardTourEnabled: PropTypes.bool,
     disableTour: PropTypes.func,
-    isLiveMode: PropTypes.bool,
-    changeDefaultBoard: PropTypes.func
+    isLiveMode: PropTypes.bool
   };
 
   state = {
@@ -197,14 +188,8 @@ export class BoardContainer extends Component {
     copyPublicBoard: false,
     blockedPrivateBoard: false,
     isFixedBoard: false,
-    copiedTiles: [],
-    isScroll: false,
-    totalRows: null
+    copiedTiles: []
   };
-  constructor(props) {
-    super(props);
-    this.boardRef = React.createRef();
-  }
 
   async componentDidMount() {
     const {
@@ -312,7 +297,6 @@ export class BoardContainer extends Component {
         ) {
           changeBoard(nextProps.match.params.id);
           previousBoard();
-          this.scrollToTop();
         }
       } else {
         // Was a browser back action?
@@ -462,13 +446,10 @@ export class BoardContainer extends Component {
     return url;
   }
 
-  async playAudio(src) {
-    const safariNeedHelp =
-      (IS_BROWSING_FROM_SAFARI || IS_BROWSING_FROM_APPLE_TOUCH) &&
-      src.endsWith('.ogg');
-    const audio = safariNeedHelp ? new ogv.OGVPlayer() : new Audio();
+  playAudio(src) {
+    let audio = new Audio();
     audio.src = src;
-    await audio.play();
+    audio.play();
   }
 
   handleEditBoardTitle = name => {
@@ -760,7 +741,7 @@ export class BoardContainer extends Component {
   };
 
   handleLayoutChange = (currentLayout, layouts) => {
-    const { updateBoard, replaceBoard, board, navigationSettings } = this.props;
+    const { updateBoard, replaceBoard, board } = this.props;
     currentLayout.sort((a, b) => {
       if (a.y === b.y) {
         return a.x - b.x;
@@ -779,19 +760,6 @@ export class BoardContainer extends Component {
         return tile.id === t || Number(tile.id) === Number(t);
       });
     });
-
-    if (navigationSettings.bigScrollButtonsActive) {
-      const cols =
-        currentLayout.reduce(function(valorAnterior, item) {
-          if (item.x > valorAnterior) return item.x;
-          return valorAnterior;
-        }, 0) + 1;
-      const rows = 3;
-      const isScroll = currentLayout.length / cols > rows ? true : false;
-      const totalRows = Math.ceil(currentLayout.length / cols);
-      this.setIsScroll(isScroll, totalRows);
-    }
-
     const newBoard = { ...board, tiles };
     replaceBoard(board, newBoard);
     if (!isEqual(board.tiles, tiles)) {
@@ -799,10 +767,6 @@ export class BoardContainer extends Component {
       updateBoard(processedBoard);
       this.saveApiBoardOperation(processedBoard);
     }
-  };
-
-  setIsScroll = (bool, totalRows = 0) => {
-    this.setState({ isScroll: bool, totalRows: totalRows });
   };
 
   handleTileDrop = async (tile, position) => {
@@ -980,9 +944,9 @@ export class BoardContainer extends Component {
       const { userData } = this.props;
       try {
         var blob = new Blob([this.convertDataURIToBinary(tile.sound)], {
-          type: 'audio/mp3; codecs=opus'
+          type: 'audio/ogg; codecs=opus'
         });
-        const audioUrl = await API.uploadFile(blob, userData.email + '.mp3');
+        const audioUrl = await API.uploadFile(blob, userData.email + '.ogg');
         tile.sound = audioUrl;
       } catch (err) {
         console.log(err.message);
@@ -1187,21 +1151,6 @@ export class BoardContainer extends Component {
         this.props.navHistory.length - 2
       ];
       this.props.history.replace(`/board/${prevBoardId}`);
-      this.scrollToTop();
-    }
-  }
-
-  onRequestToRootBoard() {
-    this.props.toRootBoard();
-    this.scrollToTop();
-  }
-
-  scrollToTop() {
-    if (this.boardRef && !this.state.isSelecting) {
-      const boardComponentRef = this.props.board.isFixed
-        ? 'fixedBoardContainerRef'
-        : 'boardContainerRef';
-      this.boardRef.current[boardComponentRef].current.scrollTop = 0;
     }
   }
 
@@ -1471,8 +1420,7 @@ export class BoardContainer extends Component {
         email: userData.email
       };
     }
-    // Prevent creating a board without the tiles property
-    if (newBoard.tiles) createBoard(newBoard);
+    createBoard(newBoard);
     // Loggedin user?
     if ('name' in userData && 'email' in userData) {
       try {
@@ -1582,7 +1530,7 @@ export class BoardContainer extends Component {
           onLockNotify={this.handleLockNotify}
           onScannerActive={this.handleScannerStrategyNotification}
           onRequestPreviousBoard={this.onRequestPreviousBoard.bind(this)}
-          onRequestToRootBoard={this.onRequestToRootBoard.bind(this)}
+          onRequestToRootBoard={this.props.toRootBoard}
           onSelectClick={this.handleSelectClick}
           onTileClick={this.handleTileClick}
           onBoardTypeChange={this.handleBoardTypeChange}
@@ -1603,11 +1551,6 @@ export class BoardContainer extends Component {
           onCopyTiles={this.handleCopyTiles}
           onPasteTiles={this.handlePasteTiles}
           copiedTiles={this.state.copiedTiles}
-          setIsScroll={this.setIsScroll}
-          isScroll={this.state.isScroll}
-          totalRows={this.state.totalRows}
-          ref={this.boardRef}
-          changeDefaultBoard={this.props.changeDefaultBoard}
         />
         <Dialog
           open={!!this.state.copyPublicBoard}
@@ -1664,6 +1607,7 @@ export class BoardContainer extends Component {
             </Button>
           </DialogActions>
         </Dialog>
+
         <TileEditor
           editingTiles={editingTiles}
           open={this.state.tileEditorOpen}
@@ -1696,11 +1640,18 @@ const mapStateToProps = ({
     communicator => communicator.id === activeCommunicatorId
   );
   const activeBoardId = board.activeBoardId;
+  const currentVoice = speech.voices.find(
+    v => v.voiceURI === speech.options.voiceURI
+  );
   const emptyVoiceAlert =
     speech.voices.length > 0 && speech.options.voiceURI !== EMPTY_VOICES
       ? false
       : true;
-  const offlineVoiceAlert = !isConnected && speech.options.isCloud;
+  const offlineVoiceAlert =
+    !isConnected &&
+    speech.voices.length &&
+    currentVoice &&
+    currentVoice.voiceSource === 'cloud';
   return {
     communicator: currentCommunicator,
     board: board.boards.find(board => board.id === activeBoardId),
@@ -1750,8 +1701,7 @@ const mapDispatchToProps = {
   downloadImages,
   disableTour,
   createApiBoard,
-  upsertApiBoard,
-  changeDefaultBoard
+  upsertApiBoard
 };
 
 export default connect(

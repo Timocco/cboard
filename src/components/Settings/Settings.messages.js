@@ -210,9 +210,5 @@ export default defineMessages({
   enableTour: {
     id: 'cboard.components.Settings.enableTour',
     defaultMessage: 'Enable tour'
-  },
-  symbols: {
-    id: 'cboard.components.Settings.symbols',
-    defaultMessage: 'Symbols'
   }
 });

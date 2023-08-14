@@ -106,11 +106,6 @@ exports[`Export tests default renderer 1`] = `
                     >
                       PDF
                     </ForwardRef(WithStyles(ForwardRef(MenuItem)))>
-                    <ForwardRef(WithStyles(ForwardRef(MenuItem)))
-                      value="picsee_pdf"
-                    >
-                      PicseePal PDF
-                    </ForwardRef(WithStyles(ForwardRef(MenuItem)))>
                   </ForwardRef(WithStyles(ForwardRef(Select)))>
                 </ForwardRef(WithStyles(ForwardRef(FormControl)))>
               </div>
@@ -184,11 +179,6 @@ exports[`Export tests default renderer 1`] = `
                     value="pdf"
                   >
                     PDF
-                  </ForwardRef(WithStyles(ForwardRef(MenuItem)))>
-                  <ForwardRef(WithStyles(ForwardRef(MenuItem)))
-                    value="picsee_pdf"
-                  >
-                    PicseePal PDF
                   </ForwardRef(WithStyles(ForwardRef(MenuItem)))>
                 </ForwardRef(WithStyles(ForwardRef(Select)))>
               </ForwardRef(WithStyles(ForwardRef(FormControl)))>

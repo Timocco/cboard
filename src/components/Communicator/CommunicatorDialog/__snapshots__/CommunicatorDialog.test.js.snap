@@ -79,8 +79,6 @@ exports[`CommunicatorDialog tests default renderer 1`] = `
               />
             </div>
             <CommunicatorDialogTour
-              communicatorTour={Object {}}
-              disableTour={[MockFunction]}
               intl={
                 Object {
                   "formatMessage": [Function],
@@ -172,8 +170,6 @@ exports[`CommunicatorDialog tests loading behavior 1`] = `
             />
           </div>
           <CommunicatorDialogTour
-            communicatorTour={Object {}}
-            disableTour={[MockFunction]}
             intl={
               Object {
                 "formatMessage": [Function],
@@ -326,8 +322,6 @@ exports[`CommunicatorDialog tests tabs behavior 1`] = `
             />
           </div>
           <CommunicatorDialogTour
-            communicatorTour={Object {}}
-            disableTour={[MockFunction]}
             intl={
               Object {
                 "formatMessage": [Function],
@@ -404,8 +398,6 @@ exports[`CommunicatorDialog tests tabs behavior 2`] = `
             />
           </div>
           <CommunicatorDialogTour
-            communicatorTour={Object {}}
-            disableTour={[MockFunction]}
             intl={
               Object {
                 "formatMessage": [Function],

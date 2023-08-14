@@ -6,38 +6,17 @@ import {
   changePitch,
   changeRate
 } from '../../../providers/SpeechProvider/SpeechProvider.actions';
-import {
-  disableTour,
-  setUnloggedUserLocation,
-  updateUnloggedUserLocation,
-  enableAllTours
-} from '../../App/App.actions';
+import { disableTour } from '../../App/App.actions';
 import { getVoiceURI } from '../../../i18n';
 
 export function loginSuccess(payload) {
-  return dispatch => {
-    dispatch({
-      type: LOGIN_SUCCESS,
-      payload
-    });
-    if (payload.isFirstLogin) firstLoginActions(dispatch, payload);
+  return {
+    type: LOGIN_SUCCESS,
+    payload
   };
-}
-
-function firstLoginActions(dispatch, payload) {
-  API.updateUser({ ...payload, isFirstLogin: false });
-  dispatch(enableAllTours());
 }
 
 export function logout() {
-  return async dispatch => {
-    dispatch(setUnloggedUserLocation(null));
-    dispatch(updateUnloggedUserLocation());
-    dispatch(logoutSuccess());
-  };
-}
-
-function logoutSuccess() {
   return {
     type: LOGOUT
   };
@@ -46,45 +25,45 @@ function logoutSuccess() {
 export function login({ email, password }, type = 'local') {
   const setAVoice = ({ loginData, dispatch, getState }) => {
     const {
-      language: { lang: appLang },
       speech: {
         voices,
-        options: { lang: deviceVoiceLang, voiceURI: deviceVoiceUri }
+        options: { lang: voiceLang, voiceURI: browserVoiceUri }
       }
     } = getState(); //ATENTION speech options on DB is under Speech directly. on state is under options
-    const emptyVoiceString = 'empty voices';
-    const appLanguageCode = appLang?.substring(0, 2);
-    const deviceVoiceLanguageCode = deviceVoiceLang?.substring(0, 2);
 
-    if (voices.length) {
+    const loginLanguage = loginData.settings?.language?.lang;
+    const appLanguage = loginLanguage?.substring(0, 2);
+    const browserVoiceLanguage = voiceLang?.substring(0, 2);
+
+    if (voices) {
       const uris = voices.map(v => {
         return v.voiceURI;
       });
-
       //if redux state have a defined voiceUri. Set it By default
       if (
-        deviceVoiceUri &&
-        deviceVoiceLanguageCode === appLanguageCode &&
-        uris.includes(deviceVoiceUri)
+        browserVoiceUri &&
+        browserVoiceLanguage === appLanguage &&
+        uris.include(browserVoiceUri)
       ) {
+        dispatch(changeVoice(browserVoiceUri, voiceLang));
         return;
       }
       //if not Try to use API stored Voice
-      if (loginData.settings?.speech) {
+      if (loginData.settings.speech) {
         const userVoiceUri = loginData.settings.speech.voiceURI; //ATENTION speech options on DB is under Speech directly. on state is under options
 
-        const userVoiceLanguage = voices.filter(
+        const userVoiceLang = voices.filter(
           voice => voice.voiceURI === userVoiceUri
-        )[0]?.lang;
+        )[0]?.voiceURI;
 
-        const userVoiceLanguageCode = userVoiceLanguage?.substring(0, 2);
+        const userVoiceLanguage = userVoiceLang.substring(0, 2);
 
         if (
           userVoiceUri &&
-          appLanguageCode === userVoiceLanguageCode &&
+          appLanguage === userVoiceLanguage &&
           uris.includes(userVoiceUri)
         ) {
-          dispatch(changeVoice(userVoiceUri, userVoiceLanguage));
+          dispatch(changeVoice(userVoiceUri, loginLanguage));
           if (loginData.settings.speech.pitch) {
             dispatch(changePitch(loginData.settings.speech.pitch));
           }
@@ -93,23 +72,8 @@ export function login({ email, password }, type = 'local') {
           }
           return;
         }
-      }
-
-      const defaultVoiceUri = getVoiceURI(appLang, voices);
-
-      if (defaultVoiceUri === emptyVoiceString) {
-        dispatch(changeVoice(emptyVoiceString, ''));
-        return;
-      }
-      //if the api stored voice is unavailable. Set default voice
-      const defaultVoiceLanguage = voices.filter(
-        voice => voice.voiceURI === defaultVoiceUri
-      )[0]?.lang;
-      dispatch(changeVoice(defaultVoiceUri, defaultVoiceLanguage));
-      return;
-    }
-    if (deviceVoiceLang === null) {
-      dispatch(changeVoice(emptyVoiceString, ''));
+      } //if the voice is unavailable. Set default voice
+      dispatch(changeVoice(getVoiceURI(loginLanguage, voices), loginLanguage));
       return;
     }
   };

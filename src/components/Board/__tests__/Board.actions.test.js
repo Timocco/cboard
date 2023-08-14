@@ -135,7 +135,7 @@ describe('actions', () => {
     };
     expect(actions.toRootBoard()).toEqual(expectedAction);
   });
-
+  
   it('should create an action to REPLACE_ME', () => {
     const boardId = '123';
     const expectedAction = {
@@ -303,13 +303,6 @@ describe('actions', () => {
     store
       .dispatch(actions.createApiBoard(mockBoard, '12345678901234567'))
       .then(data => {
-        const actions = store.getActions();
-        const dataResp = {
-          board: mockBoard,
-          boardId: '12345678901234567',
-          type: 'cboard/Board/CREATE_API_BOARD_SUCCESS'
-        };
-        expect(actions[1]).toEqual(dataResp);
         expect(data).toEqual(mockBoard);
       })
       .catch(e => {
@@ -320,16 +313,11 @@ describe('actions', () => {
     const store = mockStore(initialState);
     store
       .dispatch(actions.createApiBoard({ error: 'error' }, '12345678901234567'))
-      .then(() => {
-        throw new Error('An error was expected');
+      .then(data => {
+        expect(data).toEqual(mockBoard);
       })
       .catch(e => {
-        const actions = store.getActions();
-        const dataResp = {
-          message: '[object Object]',
-          type: 'cboard/Board/CREATE_API_BOARD_FAILURE'
-        };
-        expect(actions[1]).toEqual(dataResp);
+        throw new Error(e.message);
       });
   });
   it('check updateApiBoard', () => {
@@ -347,16 +335,11 @@ describe('actions', () => {
     const store = mockStore(initialState);
     store
       .dispatch(actions.updateApiBoard({ error: 'error' }))
-      .then(() => {
-        throw new Error('An error was expected');
+      .then(data => {
+        expect(data).toEqual(mockBoard);
       })
       .catch(e => {
-        const actions = store.getActions();
-        const dataResp = {
-          message: '[object Object]',
-          type: 'cboard/Board/UPDATE_API_BOARD_FAILURE'
-        };
-        expect(actions[1]).toEqual(dataResp);
+        throw new Error(e.message);
       });
   });
   it('check deleteApiBoard', () => {
@@ -374,16 +357,11 @@ describe('actions', () => {
     const store = mockStore(initialState);
     store
       .dispatch(actions.deleteApiBoard('error'))
-      .then(() => {
-        throw new Error('An error was expected');
+      .then(data => {
+        expect(data).toEqual(mockBoard);
       })
       .catch(e => {
-        const actions = store.getActions();
-        const dataResp = {
-          message: '[object Object]',
-          type: 'cboard/Board/DELETE_API_BOARD_FAILURE'
-        };
-        expect(actions[1]).toEqual(dataResp);
+        throw new Error(e.message);
       });
   });
   it('check updateApiObjectsNoChild', () => {

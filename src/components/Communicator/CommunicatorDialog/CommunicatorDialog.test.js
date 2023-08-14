@@ -96,10 +96,7 @@ const COMPONENT_PROPS = {
   addOrRemoveBoard: jest.fn(),
   setRootBoard: jest.fn(),
   publishBoardAction: jest.fn(),
-  updateMyBoard: jest.fn(),
-  boardReport: jest.fn(),
-  disableTour: jest.fn(),
-  communicatorTour: {}
+  updateMyBoard: jest.fn()
 };
 
 describe('CommunicatorDialog tests', () => {

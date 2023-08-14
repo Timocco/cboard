@@ -18,7 +18,7 @@ import { injectIntl } from 'react-intl';
 class SymbolOutput extends PureComponent {
   constructor(props) {
     super(props);
-    this.scrollContainerRef = React.createRef();
+
     this.state = {
       openPhraseShareDialog: false
     };
@@ -54,29 +54,6 @@ class SymbolOutput extends PureComponent {
     symbols: []
   };
 
-  scrollToLastSymbol = () => {
-    try {
-      const lastOutputSymbol = this.scrollContainerRef.current
-        ?.lastElementChild;
-
-      if (lastOutputSymbol && lastOutputSymbol.scrollIntoView)
-        lastOutputSymbol.scrollIntoView({
-          inline: 'end'
-        });
-    } catch (err) {
-      console.error('Error during autoScroll of output bar', err);
-    }
-  };
-
-  componentDidMount() {
-    this.scrollToLastSymbol();
-  }
-
-  componentDidUpdate(prevProps) {
-    const { symbols } = this.props;
-    if (prevProps.symbols.length < symbols.length) this.scrollToLastSymbol();
-  }
-
   render() {
     const {
       intl,
@@ -91,7 +68,6 @@ class SymbolOutput extends PureComponent {
       navigationSettings,
       phrase,
       isLiveMode,
-      increaseOutputButtons,
       ...other
     } = this.props;
 
@@ -113,8 +89,8 @@ class SymbolOutput extends PureComponent {
 
     return (
       <div className="SymbolOutput">
-        <Scroll scrollContainerReference={this.scrollContainerRef} {...other}>
-          {symbols.map(({ image, label, type, keyPath }, index) => (
+        <Scroll {...other}>
+          {symbols.map(({ image, label, type }, index) => (
             <div
               className={
                 type === 'live'
@@ -126,7 +102,6 @@ class SymbolOutput extends PureComponent {
               <Symbol
                 className="SymbolOutput__symbol"
                 image={image}
-                keyPath={keyPath}
                 label={label}
                 type={type}
                 labelpos="Below"
@@ -147,69 +122,50 @@ class SymbolOutput extends PureComponent {
             </div>
           ))}
         </Scroll>
-        <div
-          style={{
-            display: 'flex',
-            marginLeft: 'auto',
-            minWidth: 'fit-content'
-          }}
-        >
-          {navigationSettings.shareShowActive && (
-            <PhraseShare
-              label={intl.formatMessage(messages.share)}
-              intl={this.props.intl}
-              onShareClick={this.onShareClick}
-              onShareClose={this.onShareClose}
-              publishBoard={this.publishBoard}
-              onCopyPhrase={onCopyClick}
-              open={this.state.openPhraseShareDialog}
-              phrase={this.props.phrase}
-              style={copyButtonStyle}
-              hidden={!symbols.length}
-              increaseOutputButtons={increaseOutputButtons}
+        {navigationSettings.shareShowActive && (
+          <PhraseShare
+            label={intl.formatMessage(messages.share)}
+            intl={this.props.intl}
+            onShareClick={this.onShareClick}
+            onShareClose={this.onShareClose}
+            publishBoard={this.publishBoard}
+            onCopyPhrase={onCopyClick}
+            open={this.state.openPhraseShareDialog}
+            phrase={this.props.phrase}
+            style={copyButtonStyle}
+            hidden={!symbols.length}
+          />
+        )}
+        {!navigationSettings.removeOutputActive && (
+          <BackspaceButton
+            color="inherit"
+            onClick={onBackspaceClick}
+            style={backspaceButtonStyle}
+            hidden={navigationSettings.removeOutputActive}
+          />
+        )}
+        <div className="SymbolOutput__right__btns">
+          {navigationSettings.liveMode && (
+            <FormControlLabel
+              value="bottom"
+              control={
+                <Switch
+                  size="small"
+                  checked={isLiveMode}
+                  color="primary"
+                  onChange={onSwitchLiveMode}
+                />
+              }
+              label={intl.formatMessage(messages.live)}
+              labelPlacement="bottom"
             />
           )}
-
-          {!navigationSettings.removeOutputActive && (
-            <BackspaceButton
-              color="inherit"
-              onClick={onBackspaceClick}
-              style={backspaceButtonStyle}
-              hidden={navigationSettings.removeOutputActive}
-              increaseOutputButtons={increaseOutputButtons}
-            />
-          )}
-          <div
-            className={
-              increaseOutputButtons
-                ? 'SymbolOutput__right__btns__lg'
-                : 'SymbolOutput__right__btns'
-            }
-          >
-            {navigationSettings.liveMode && (
-              <FormControlLabel
-                value="bottom"
-                className={increaseOutputButtons ? 'Live__switch_lg' : null}
-                control={
-                  <Switch
-                    size="small"
-                    checked={isLiveMode}
-                    color="primary"
-                    onChange={onSwitchLiveMode}
-                  />
-                }
-                label={intl.formatMessage(messages.live)}
-                labelPlacement="bottom"
-              />
-            )}
-            <ClearButton
-              color="inherit"
-              onClick={onClearClick}
-              style={clearButtonStyle}
-              hidden={!symbols.length}
-              increaseOutputButtons={increaseOutputButtons}
-            />
-          </div>
+          <ClearButton
+            color="inherit"
+            onClick={onClearClick}
+            style={clearButtonStyle}
+            hidden={!symbols.length}
+          />
         </div>
       </div>
     );

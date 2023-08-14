@@ -23,7 +23,6 @@ import DownloadingLangErrorDialog from './downloadingLangErrorDialog';
 import { isAndroid, onAndroidPause } from '../../../cordova-util';
 import ISO6391 from 'iso-639-1';
 import { showNotification } from '../../Notifications/Notifications.actions';
-import { getArasaacDB } from '../../../idb/arasaac/arasaacdb';
 
 const downloadablesTts = require('./downloadablesTts.json');
 
@@ -95,8 +94,6 @@ export class LanguageContainer extends Component {
   handleSubmit = async (optionalLang = null) => {
     const { onLangChange } = this.props;
     const selectedLang = optionalLang ? optionalLang : this.state.selectedLang;
-    onLangChange(selectedLang);
-    this.initArasaacDB(selectedLang);
     try {
       await API.updateSettings({
         language: { lang: selectedLang }
@@ -104,11 +101,7 @@ export class LanguageContainer extends Component {
     } catch (err) {
       console.log(err.message);
     }
-  };
-
-  initArasaacDB = async lang => {
-    const arasaacDB = getArasaacDB();
-    arasaacDB.initTextStore(lang.slice(0, 2));
+    onLangChange(selectedLang);
   };
 
   onClose = () => {

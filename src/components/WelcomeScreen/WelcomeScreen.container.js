@@ -7,7 +7,6 @@ import Link from '@material-ui/core/Link';
 import CloseIcon from '@material-ui/icons/Close';
 import IconButton from '../UI/IconButton';
 import {
-  AppleLoginButton,
   FacebookLoginButton,
   GoogleLoginButton
 } from 'react-social-login-buttons';
@@ -25,8 +24,8 @@ import {
   FACEBOOK_AUTH_ENABLED,
   GOOGLE_AUTH_ENABLED
 } from '../../constants';
-// import { login } from '../Account/Login/Login.actions';
-import { isAndroid, isElectron, isIOS } from '../../cordova-util';
+import { isAndroid, isElectron } from '../../cordova-util';
+import { login } from '../Account/Login/Login.actions';
 
 export class WelcomeScreen extends Component {
   state = {
@@ -58,17 +57,21 @@ export class WelcomeScreen extends Component {
   };
 
   handleGoogleLoginClick = () => {
-    const { intl } = this.props;
-    if (isAndroid() || isIOS()) {
+    const { intl, login } = this.props;
+    if (isAndroid()) {
       window.plugins.googleplus.login(
         {
           // 'scopes': '... ', // optional, space-separated list of scopes, If not included or empty, defaults to `profile` and `email`.
           offline: true // optional, but requires the webClientId - if set to true the plugin will also return a serverAuthCode, which can be used to grant offline access to a non-Google server
         },
         function(obj) {
-          window.location.hash = `#/login/googletoken/callback?access_token=${
-            obj.accessToken
-          }`;
+          login(
+            {
+              email: 'googletoken',
+              password: `?access_token=${obj.accessToken}`
+            },
+            'oAuth'
+          );
         },
         function(msg) {
           alert(intl.formatMessage(messages.loginErrorAndroid));
@@ -76,18 +79,24 @@ export class WelcomeScreen extends Component {
         }
       );
     } else {
-      window.location = `${API_URL}login/google`;
+      window.location = `${API_URL}/login/google`;
     }
   };
 
   handleFacebookLoginClick = () => {
-    const { intl } = this.props;
-    if (isAndroid() || isIOS()) {
+    const { intl, login } = this.props;
+    if (isAndroid()) {
       window.facebookConnectPlugin.login(
         ['email'],
         function(userData) {
           window.facebookConnectPlugin.getAccessToken(function(accesToken) {
-            window.location.hash = `#/login/facebooktoken/callback?access_token=${accesToken}`;
+            login(
+              {
+                email: 'facebooktoken',
+                password: `?access_token=${accesToken}`
+              },
+              'oAuth'
+            );
           });
         },
         function(msg) {
@@ -96,28 +105,8 @@ export class WelcomeScreen extends Component {
         }
       );
     } else {
-      window.location = `${API_URL}login/facebook`;
+      window.location = `${API_URL}/login/facebook`;
     }
-  };
-
-  handleAppleLoginClick = () => {
-    const intl = this.props.intl;
-    if (isIOS()) {
-      window.cordova.plugins.SignInWithApple.signin(
-        { requestedScopes: [0, 1] },
-        function(succ) {
-          window.location.hash = `#/login/apple/callback?${
-            succ.authorizationCode
-          }`;
-        },
-        function(err) {
-          alert(intl.formatMessage(messages.loginErrorAndroid));
-          console.error(err);
-        }
-      );
-      return;
-    }
-    window.location = `${API_URL}login/apple-web`;
   };
 
   render() {
@@ -173,15 +162,6 @@ export class WelcomeScreen extends Component {
                   <FormattedMessage {...messages.facebook} />
                 </FacebookLoginButton>
               )}
-
-              {!isAndroid() && !isElectron() && (
-                <AppleLoginButton
-                  className="WelcomeScreen__button WelcomeScreen__button--google"
-                  onClick={this.handleAppleLoginClick}
-                >
-                  <FormattedMessage {...messages.apple} />
-                </AppleLoginButton>
-              )}
             </div>
 
             {!onClose && (
@@ -232,7 +212,8 @@ export class WelcomeScreen extends Component {
 }
 
 const mapDispatchToProps = {
-  finishFirstVisit
+  finishFirstVisit,
+  login
 };
 
 export default connect(

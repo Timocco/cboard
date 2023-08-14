@@ -47,8 +47,8 @@ class API {
       response => response,
       error => {
         if (
-          error.response?.status === 403 &&
-          error.config?.baseURL === BASE_URL
+          error.response.status === 403 &&
+          error.config.baseURL === BASE_URL
         ) {
           if (isAndroid()) {
             window.plugins.googleplus.disconnect(function(msg) {
@@ -65,6 +65,7 @@ class API {
           }
           getStore().dispatch(logout());
           history.push('/login-signup/');
+          window.location.reload();
         }
         return Promise.reject(error);
       }
@@ -111,15 +112,6 @@ class API {
       return [];
     } catch (err) {
       return [];
-    }
-  }
-  async arasaacPictogramsGetImageUrl(pictogGetTextPath) {
-    try {
-      const { status, data } = await this.axiosInstance.get(pictogGetTextPath);
-      if (status === 200) return data.image;
-      return '';
-    } catch (err) {
-      return '';
     }
   }
 
@@ -178,32 +170,9 @@ class API {
   }
 
   async oAuthLogin(type, query) {
-    if (type === 'apple' || type === 'apple-web') {
-      const authCode = query?.substring(1);
-      const { data } = await this.axiosInstance.post(
-        `/login/${type}/callback`,
-        {
-          state: 'cordova',
-          code: authCode
-        }
-      );
-      return data;
-    }
     const { data } = await this.axiosInstance.get(
       `/login/${type}/callback${query}`
     );
-    return data;
-  }
-
-  async getUserData(userId) {
-    const authToken = getAuthToken();
-    const headers = {
-      Authorization: `Bearer ${authToken}`
-    };
-
-    const { data } = await this.axiosInstance.get(`/user/${userId}`, {
-      headers
-    });
     return data;
   }
 
@@ -504,29 +473,6 @@ class API {
       }
     );
     return data;
-  }
-
-  async getUserLocation() {
-    const { data } = await this.axiosInstance.get(`/location`);
-    return data;
-  }
-
-  async deleteAccount() {
-    const userId = getUserData().id;
-    if (userId) {
-      const authToken = getAuthToken();
-      if (!(authToken && authToken.length)) {
-        throw new Error('Need to be authenticated to perform this request');
-      }
-
-      const headers = {
-        Authorization: `Bearer ${authToken}`
-      };
-      const { data } = await this.axiosInstance.delete(`/account/${userId}`, {
-        headers
-      });
-      return data;
-    }
   }
 }
 

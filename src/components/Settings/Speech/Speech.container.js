@@ -125,7 +125,7 @@ export class SpeechContainer extends Component {
     // typically, voice should be found
     let voice = voices.find(v => voiceURI === v.voiceURI);
     // handle exceptional cases
-    if (!voice && voices && voices.length) {
+    if (!voice && voices.lenght) {
       // rare case
       voice = voices[0];
     } else if (!voice && !voices) {

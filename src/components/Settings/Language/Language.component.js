@@ -233,39 +233,6 @@ class Language extends React.Component {
     return null;
   }
 
-  getFormattedName(lang) {
-    const locale = lang.slice(0, 2).toLowerCase();
-    let name = <FormattedMessage {...messages[locale]} />;
-
-    //handle custom names
-    if (lang === 'sr-ME') {
-      name = <FormattedMessage {...messages['srme']} />;
-    }
-    return name;
-  }
-
-  getNativeName(lang) {
-    const { langs } = this.props;
-    const locale = lang.slice(0, 2).toLowerCase();
-    const showLangCode =
-      langs.filter(langCode => langCode.slice(0, 2).toLowerCase() === locale)
-        .length > 1;
-    const langCode = showLangCode ? `(${lang})` : '';
-    let nativeName = `${ISO6391.getNativeName(locale)} ${langCode}`;
-
-    //handle custom native name
-    if (lang === 'sr-ME') {
-      nativeName = 'Crnogorski jezik';
-    } else if (lang === 'sr-SP') {
-      nativeName = `Српски језик ${langCode}`;
-    } else if (lang === 'sr-RS') {
-      nativeName = `Srpski jezik ${langCode}`;
-    } else if (lang === 'pt-TL') {
-      nativeName = `Tetum`;
-    }
-    return nativeName;
-  }
-
   render() {
     const {
       langs,
@@ -293,6 +260,23 @@ class Language extends React.Component {
     const ttsEnginesNames = ttsEngines.map(tts => tts.name);
 
     const langItems = langs.map((lang, index, array) => {
+      const locale = lang.slice(0, 2).toLowerCase();
+      const showLangCode =
+        langs.filter(langCode => langCode.slice(0, 2).toLowerCase() === locale)
+          .length > 1;
+      const langCode = showLangCode ? `(${lang})` : '';
+      let nativeName = `${ISO6391.getNativeName(locale)} ${langCode}`;
+      //handle custom native name
+      if (lang === 'sr-ME') {
+        nativeName = 'Crnogorski jezik';
+      } else if (lang === 'sr-SP') {
+        nativeName = `Српски језик ${langCode}`;
+      } else if (lang === 'sr-RS') {
+        nativeName = `Srpski jezik ${langCode}`;
+      } else if (lang === 'pt-TL') {
+        nativeName = `Tetum`;
+      }
+
       const isLocalLang = localLangs.includes(lang);
 
       return (
@@ -307,8 +291,8 @@ class Language extends React.Component {
         >
           <div className="Language__LangMenuItemText">
             <ListItemText
-              primary={this.getNativeName(lang)}
-              secondary={this.getFormattedName(lang)}
+              primary={nativeName}
+              secondary={<FormattedMessage {...messages[locale]} />}
             />
             {!isLocalLang && (
               <Chip label="online" size="small" color="secondary" />
@@ -327,7 +311,7 @@ class Language extends React.Component {
     });
 
     const downloadableLangItems = downloadablesLangsOnly?.map(
-      ({ lang, marketId, ttsName }, index, array) => {
+      ({ lang, langCode, nativeName, marketId, ttsName }, index, array) => {
         const availableTts = ttsEnginesNames.includes(ttsName);
         const sameTts = ttsEngine && ttsEngine.name === ttsName;
         return (
@@ -353,8 +337,8 @@ class Language extends React.Component {
           >
             <div className="Language__LangMenuItemText">
               <ListItemText
-                primary={this.getNativeName(lang)}
-                secondary={this.getFormattedName(lang)}
+                primary={nativeName ? nativeName : lang}
+                secondary={<FormattedMessage {...messages[langCode]} />}
                 className={'Language__LangListItemText'}
               />
               {(!availableTts || sameTts) && (

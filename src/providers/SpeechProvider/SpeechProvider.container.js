@@ -8,8 +8,7 @@ import {
   getTtsEngines,
   getTtsDefaultEngine,
   updateLangSpeechStatus,
-  setTtsEngine,
-  setCurrentVoiceSource
+  setTtsEngine
 } from './SpeechProvider.actions';
 import { isAndroid } from '../../cordova-util';
 
@@ -27,8 +26,7 @@ export class SpeechProvider extends Component {
       getTtsEngines,
       getTtsDefaultEngine,
       ttsEngine,
-      setTtsEngine,
-      setCurrentVoiceSource
+      setTtsEngine
     } = this.props;
 
     if (tts.isSupported()) {
@@ -51,7 +49,6 @@ export class SpeechProvider extends Component {
         console.error(err.message);
       }
     }
-    setCurrentVoiceSource();
   }
 
   render() {
@@ -70,8 +67,7 @@ const mapDispatchToProps = {
   getTtsEngines,
   getTtsDefaultEngine,
   setTtsEngine,
-  updateLangSpeechStatus,
-  setCurrentVoiceSource
+  updateLangSpeechStatus
 };
 
 export default connect(

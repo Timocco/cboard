@@ -56,10 +56,7 @@ const getVoiceLabel = voice => {
   if (voice.name === 'srpski Crna Gora') {
     return voice.voiceURI;
   }
-  const isSerbianVoice = voice.lang?.startsWith('sr');
-  return isCordova() && !isSerbianVoice
-    ? voice.name + ' - ' + voice.voiceURI
-    : voice.name;
+  return isCordova() ? voice.name + ' - ' + voice.voiceURI : voice.name;
 };
 
 const Speech = ({
@@ -152,27 +149,20 @@ const Speech = ({
           open={isVoiceOpen}
           onClose={handleVoiceClose}
         >
-          {langVoices.map((voice, index) => {
-            const VoiceItem = (
-              <MenuItem
-                key={index}
-                selected={index === selectedVoiceIndex}
-                onClick={() => onMenuItemClick(voice, index)}
-              >
-                <div className="Speech__VoiceMenuItemText">
-                  <div className="Speech__VoiceLabel">
-                    {getVoiceLabel(voice)}
-                  </div>
-                  {voice.voiceSource === 'cloud' && (
-                    <Chip label="online" size="small" color="secondary" />
-                  )}
-                </div>
-              </MenuItem>
-            );
-
-            const VoiceOption = VoiceItem;
-            return VoiceOption;
-          })}
+          {langVoices.map((voice, index) => (
+            <MenuItem
+              key={index}
+              selected={index === selectedVoiceIndex}
+              onClick={() => onMenuItemClick(voice, index)}
+            >
+              <div className="Speech__VoiceMenuItemText">
+                <div className="Speech__VoiceLabel">{getVoiceLabel(voice)}</div>
+                {voice.voiceSource === 'cloud' && (
+                  <Chip label="online" size="small" color="secondary" />
+                )}
+              </div>
+            </MenuItem>
+          ))}
         </Menu>
       )}
     </FullScreenDialog>

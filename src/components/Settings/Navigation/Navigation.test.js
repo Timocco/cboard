@@ -3,7 +3,6 @@ import { shallowMatchSnapshot } from '../../../common/test_utils';
 import { shallow } from 'enzyme';
 import toJson from 'enzyme-to-json';
 import Navigation from './Navigation.component';
-import { NAVIGATION_BUTTONS_STYLE_SIDES } from './Navigation.constants';
 
 jest.mock('./Navigation.messages', () => {
   return {
@@ -26,8 +25,6 @@ const INITIAL_NAVIGATION_SETTINGS = {
   active: false,
   shareShowActive: false,
   caBackButtonActive: false,
-  bigScrollButtonsActive: false,
-  navigationButtonsStyle: NAVIGATION_BUTTONS_STYLE_SIDES,
   quickUnlockActive: false,
   removeOutputActive: false,
   vocalizeFolders: false
@@ -40,7 +37,6 @@ const COMPONENT_PROPS = {
   updateNavigationSettings: payload => {
     navigationSettings = { ...navigationSettings, ...payload };
   },
-  changeLiveMode: () => {},
   onClose: () => {},
   onSubmit: () => {}
 };
@@ -63,15 +59,10 @@ describe('Navigation tests', () => {
     switch1.simulate('change');
     const switch2 = wrapper.find('WithStyles(ForwardRef(Switch))').at(2);
     switch2.simulate('change');
-    const switch3 = wrapper.find('WithStyles(ForwardRef(Switch))').at(3);
-    switch3.simulate('change');
 
     const newState = wrapper.state();
 
     expect(state.caBackButtonActive).not.toBe(newState.caBackButtonActive);
-    expect(state.bigScrollButtonsActive).not.toBe(
-      newState.bigScrollButtonsActive
-    );
     expect(state.shareShowActive).not.toBe(newState.shareShowActive);
     expect(state.removeOutputActive).not.toBe(newState.removeOutputActive);
 
