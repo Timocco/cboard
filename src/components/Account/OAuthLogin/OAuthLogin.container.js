@@ -20,29 +20,24 @@ class OAuthLoginContainer extends React.Component {
       match: {
         params: { type }
       },
-      location: { search: query }
+      location: { search: query },
+      history
     } = this.props;
 
     this.type = type;
     this.query = query;
-    this.state = {
-      hasErrors: query.indexOf('error=') >= 0
-    };
+    this.hasErrors = query.indexOf('error=') >= 0;
+
+    if (this.hasErrors) {
+      setTimeout(() => {
+        history.replace('/');
+      }, 3000);
+    }
   }
 
   componentDidMount() {
-    const { hasErrors } = this.state;
-    if (hasErrors) {
-      this.handleError();
-      return;
-    }
-
     if (!this.checkUser()) {
-      this.props
-        .login({ email: this.type, password: this.query }, this.type)
-        .catch(error => {
-          this.handleError();
-        });
+      this.props.login({ email: this.type, password: this.query }, this.type);
     }
   }
 
@@ -59,20 +54,11 @@ class OAuthLoginContainer extends React.Component {
     return !!user.email;
   }
 
-  handleError() {
-    const { history } = this.props;
-    this.setState({ hasErrors: true });
-    setTimeout(() => {
-      history.replace('/login-signup');
-    }, 3000);
-  }
-
   render() {
-    const { hasErrors } = this.state;
     return (
       <div className="OAuthContainer">
-        {!hasErrors && <FormattedMessage {...messages.loading} />}
-        {hasErrors && <FormattedMessage {...messages.errorMessage} />}
+        {!this.hasErrors && <FormattedMessage {...messages.loading} />}
+        {this.hasErrors && <FormattedMessage {...messages.errorMessage} />}
       </div>
     );
   }

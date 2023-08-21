@@ -99,11 +99,31 @@ exports[`Display tests default renderer 1`] = `
               onChange={[Function]}
               style={
                 Object {
-                  "fontFamily": "Roboto,Helvetica,Arial,sans-serif",
+                  "fontFamily": "Helvetica,Arial,sans-serif",
                 }
               }
-              value="Roboto"
+              value="Cboard Helvetica"
             >
+              <ForwardRef(WithStyles(ForwardRef(MenuItem)))
+                style={
+                  Object {
+                    "fontFamily": "Helvetica,Arial,sans-serif",
+                  }
+                }
+                value="Cboard Helvetica"
+              >
+                Cboard Helvetica
+              </ForwardRef(WithStyles(ForwardRef(MenuItem)))>
+              <ForwardRef(WithStyles(ForwardRef(MenuItem)))
+                style={
+                  Object {
+                    "fontFamily": "Roboto,Helvetica,Arial,sans-serif",
+                  }
+                }
+                value="Roboto"
+              >
+                Roboto
+              </ForwardRef(WithStyles(ForwardRef(MenuItem)))>
               <ForwardRef(WithStyles(ForwardRef(MenuItem)))
                 style={
                   Object {
@@ -123,16 +143,6 @@ exports[`Display tests default renderer 1`] = `
                 value="Hind"
               >
                 Hind
-              </ForwardRef(WithStyles(ForwardRef(MenuItem)))>
-              <ForwardRef(WithStyles(ForwardRef(MenuItem)))
-                style={
-                  Object {
-                    "fontFamily": "Indie Flower,cursive",
-                  }
-                }
-                value="Indie Flower"
-              >
-                Indie Flower
               </ForwardRef(WithStyles(ForwardRef(MenuItem)))>
               <ForwardRef(WithStyles(ForwardRef(MenuItem)))
                 style={
@@ -157,12 +167,12 @@ exports[`Display tests default renderer 1`] = `
               <ForwardRef(WithStyles(ForwardRef(MenuItem)))
                 style={
                   Object {
-                    "fontFamily": "Roboto,Helvetica,Arial,sans-serif",
+                    "fontFamily": "Indie Flower,cursive",
                   }
                 }
-                value="Roboto"
+                value="Indie Flower"
               >
-                Roboto
+                Indie Flower
               </ForwardRef(WithStyles(ForwardRef(MenuItem)))>
             </ForwardRef(WithStyles(ForwardRef(Select)))>
           </ForwardRef(WithStyles(ForwardRef(FormControl)))>
@@ -243,30 +253,6 @@ exports[`Display tests default renderer 1`] = `
         />
         <ForwardRef(WithStyles(ForwardRef(ListItemSecondaryAction)))>
           <ForwardRef(WithStyles(ForwardRef(Switch)))
-            color="secondary"
-            onChange={[Function]}
-            value="active"
-          />
-        </ForwardRef(WithStyles(ForwardRef(ListItemSecondaryAction)))>
-      </ForwardRef(WithStyles(ForwardRef(ListItem)))>
-      <ForwardRef(WithStyles(ForwardRef(Divider))) />
-      <ForwardRef(WithStyles(ForwardRef(ListItem)))>
-        <ForwardRef(WithStyles(ForwardRef(ListItemText)))
-          className="Display__ListItemText"
-          primary={
-            <FormattedMessage
-              values={Object {}}
-            />
-          }
-          secondary={
-            <FormattedMessage
-              values={Object {}}
-            />
-          }
-        />
-        <ForwardRef(WithStyles(ForwardRef(ListItemSecondaryAction)))>
-          <ForwardRef(WithStyles(ForwardRef(Switch)))
-            checked={false}
             color="secondary"
             onChange={[Function]}
             value="active"

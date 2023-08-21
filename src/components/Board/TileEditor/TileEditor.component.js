@@ -35,7 +35,6 @@ import ImageEditor from '../ImageEditor';
 
 import API from '../../../api';
 import { isAndroid, writeCvaFile } from '../../../cordova-util';
-import { convertImageUrlToCatchable } from '../../../helpers';
 
 export class TileEditor extends Component {
   static propTypes = {
@@ -221,7 +220,7 @@ export class TileEditor extends Component {
       try {
         const imageUrl = await API.uploadFile(blob, fileName);
         // console.log('imagen guardada en servidor', imageUrl);
-        return convertImageUrlToCatchable(imageUrl) || imageUrl;
+        return imageUrl;
       } catch (error) {
         //console.log('imagen no guardad en servidor');
         return await this.blobToBase64(blob);
@@ -304,12 +303,11 @@ export class TileEditor extends Component {
     this.setState({ imageUploadedData: imageUploadedData });
   };
 
-  handleSymbolSearchChange = ({ image, labelKey, label, keyPath }) => {
+  handleSymbolSearchChange = ({ image, labelKey, label }) => {
     return new Promise(resolve => {
       this.updateTileProperty('labelKey', labelKey);
       this.updateTileProperty('label', label);
       this.updateTileProperty('image', image);
-      if (keyPath) this.updateTileProperty('keyPath', keyPath);
       if (this.state.imageUploadedData.length) {
         this.setimageUploadedData(false, '');
       }
@@ -521,11 +519,7 @@ export class TileEditor extends Component {
                           Boolean(tileInView.loadBoard) ? 'folder' : 'button'
                         }
                       >
-                        <Symbol
-                          image={tileInView.image}
-                          label={currentLabel}
-                          keyPath={tileInView.keyPath}
-                        />
+                        <Symbol image={tileInView.image} label={currentLabel} />
                       </Tile>
                     </div>
                     {this.state.isEditImageBtnActive && (

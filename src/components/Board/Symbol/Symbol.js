@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { isCordova } from '../../../cordova-util';
@@ -8,7 +8,6 @@ import messages from '../Board.messages';
 import { LABEL_POSITION_BELOW } from '../../Settings/Display/Display.constants';
 import './Symbol.css';
 import { Typography } from '@material-ui/core';
-import { getArasaacDB } from '../../../idb/arasaac/arasaacdb';
 
 const propTypes = {
   /**
@@ -26,46 +25,13 @@ const propTypes = {
 };
 
 function Symbol(props) {
-  const {
-    className,
-    label,
-    labelpos,
-    keyPath,
-    type,
-    onWrite,
-    intl,
-    image,
-    ...other
-  } = props;
-  const [src, setSrc] = useState('');
+  const { className, label, labelpos, type, onWrite, intl, ...other } = props;
 
-  useEffect(
-    () => {
-      async function getSrc() {
-        let image = null;
-        if (keyPath) {
-          const arasaacDB = await getArasaacDB();
-          image = await arasaacDB.getImageById(keyPath);
-        }
-
-        if (image) {
-          const blob = new Blob([image.data], { type: image.type });
-          setSrc(URL.createObjectURL(blob));
-        } else if (props.image) {
-          // Cordova path cannot be absolute
-          const image =
-            isCordova() && props.image && props.image.search('/') === 0
-              ? `.${props.image}`
-              : props.image;
-
-          setSrc(image);
-        }
-      }
-
-      getSrc();
-    },
-    [keyPath, setSrc, props.image]
-  );
+  // Cordova path cannot be absolute
+  const image =
+    isCordova() && props.image && props.image.search('/') === 0
+      ? `.${props.image}`
+      : props.image;
 
   const symbolClassName = classNames('Symbol', className);
 
@@ -77,7 +43,7 @@ function Symbol(props) {
   };
 
   return (
-    <div className={symbolClassName} image={src} {...other}>
+    <div className={symbolClassName} {...other}>
       {props.type === 'live' && (
         <OutlinedInput
           id="outlined-live-input"
@@ -104,9 +70,9 @@ function Symbol(props) {
         props.labelpos !== 'Hidden' && (
           <Typography className="Symbol__label">{label}</Typography>
         )}
-      {src && (
+      {image && (
         <div className="Symbol__image-container">
-          <img className="Symbol__image" src={src} alt="" />
+          <img className="Symbol__image" src={image} alt="" />
         </div>
       )}
       {props.type !== 'live' &&

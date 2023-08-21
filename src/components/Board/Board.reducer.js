@@ -1,6 +1,6 @@
 import moment from 'moment';
 
-import { DEFAULT_BOARDS } from '../../helpers';
+import defaultBoards from '../../api/boards.json';
 
 import {
   IMPORT_BOARDS,
@@ -39,7 +39,7 @@ import {
 } from './Board.constants';
 import { LOGOUT, LOGIN_SUCCESS } from '../Account/Login/Login.constants';
 
-const [...boards] = [...DEFAULT_BOARDS.advanced, ...DEFAULT_BOARDS.picSeePal];
+const [...boards] = defaultBoards.advanced;
 const initialState = {
   boards,
   output: [],
@@ -106,7 +106,7 @@ function boardReducer(state = initialState, action) {
       return {
         ...state,
         activeBoardId,
-        navHistory: activeBoardId ? [activeBoardId] : []
+        navHistory: [activeBoardId]
       };
 
     case LOGOUT:

@@ -9,47 +9,28 @@ const NavigationButtons = ({
   active,
   navHistory,
   previousBoard,
-  toRootBoard,
-  isSaving,
-  isNavigationButtonsOnTheSide
+  toRootBoard
 }) => {
   if (!active) {
     return null;
   }
-  const classPreviousBoardButton = isNavigationButtonsOnTheSide
-    ? `SideNavigationButton SideButtonPreviousBoard ${
-        !isSaving && navHistory.length > 1 ? '' : 'disable'
-      }`
-    : `NavigationButton right`;
-
-  const classToRootBoardButton = isNavigationButtonsOnTheSide
-    ? `SideNavigationButton SideButtonToRootBoard ${
-        !isSaving && navHistory.length > 2 ? '' : 'disable'
-      }`
-    : 'NavigationButton left';
 
   return (
     <React.Fragment>
-      <div
-        className={
-          isNavigationButtonsOnTheSide ? `SideNavigationButtonsContainer` : ''
-        }
-      >
-        {(navHistory.length > 2 || isNavigationButtonsOnTheSide) && (
-          <div className={classToRootBoardButton}>
-            <button onClick={toRootBoard}>
-              <FirstPageIcon />
-            </button>
-          </div>
-        )}
-        {(navHistory.length > 1 || isNavigationButtonsOnTheSide) && (
-          <div className={classPreviousBoardButton}>
-            <button onClick={previousBoard}>
-              <ChevronLeftIcon />
-            </button>
-          </div>
-        )}
-      </div>
+      {navHistory.length > 2 && (
+        <div className="NavigationButton left">
+          <button onClick={toRootBoard}>
+            <FirstPageIcon />
+          </button>
+        </div>
+      )}
+      {navHistory.length > 1 && (
+        <div className="NavigationButton right">
+          <button onClick={previousBoard}>
+            <ChevronLeftIcon />
+          </button>
+        </div>
+      )}
     </React.Fragment>
   );
 };
@@ -57,9 +38,7 @@ const NavigationButtons = ({
 NavigationButtons.props = {
   navHistory: PropTypes.arrayOf(PropTypes.string),
   previousBoard: PropTypes.func,
-  toRootBoard: PropTypes.func,
-  isSaving: PropTypes.bool,
-  isNavigationButtonsOnTheSide: PropTypes.bool
+  toRootBoard: PropTypes.func
 };
 
 export default NavigationButtons;

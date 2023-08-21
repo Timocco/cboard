@@ -6,20 +6,11 @@ export const isAndroid = () =>
 export const isElectron = () =>
   isCordova() && window.cordova.platformId === 'electron';
 
-export const isIOS = () => isCordova() && window.cordova.platformId === 'ios';
-
 export const onCordovaReady = onReady =>
   document.addEventListener('deviceready', onReady, false);
 
 export const onAndroidPause = onPause =>
   document.addEventListener('pause', onPause, false);
-
-export const onCvaResume = onResume =>
-  document.addEventListener('resume', onResume, false);
-
-export const cleanUpCvaOnResume = onResume => {
-  document.removeEventListener('resume', onResume, false);
-};
 
 export const initCordovaPlugins = () => {
   console.log('now cordova is ready ');
@@ -44,42 +35,8 @@ export const initCordovaPlugins = () => {
     } catch (err) {
       console.log(err.message);
     }
-    try {
-      configFacebookPlugin();
-    } catch (err) {
-      console.log(err.message);
-    }
-    try {
-      if (isAndroid) configAppPurchasePlugin();
-    } catch (err) {
-      console.log(err.message);
-    }
+    configFacebookPlugin();
   }
-};
-
-const configAppPurchasePlugin = () => {
-  const store = window.CdvPurchase.store;
-  const { ProductType, Platform } = window.CdvPurchase; // shortcuts
-
-  store.register([
-    {
-      id: 'one_year_subscription',
-      type: ProductType.PAID_SUBSCRIPTION,
-      platform: Platform.GOOGLE_PLAY
-    },
-    {
-      id: 'test',
-      type: ProductType.PAID_SUBSCRIPTION,
-      platform: Platform.GOOGLE_PLAY
-    }
-  ]);
-  //error handler
-  store.error(errorHandler);
-  function errorHandler(error) {
-    console.error(`ERROR ${error.code}: ${error.message}`);
-  }
-
-  store.initialize([Platform.GOOGLE_PLAY]);
 };
 
 const configFacebookPlugin = () => {

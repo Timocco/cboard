@@ -30,7 +30,6 @@ const initialState = {
   options: {
     lang: '',
     voiceURI: null,
-    isCloud: null,
     pitch: 1.0,
     rate: 1.0,
     volume: 1
@@ -78,8 +77,7 @@ function speechProviderReducer(state = initialState, action) {
         options: {
           ...state.options,
           voiceURI: action ? action.voiceURI : EMPTY_VOICES,
-          lang: action ? action.lang : DEFAULT_LANG,
-          isCloud: action ? action.isCloud || null : null
+          lang: action ? action.lang : DEFAULT_LANG
         }
       };
     case RECEIVE_TTS_ENGINES:

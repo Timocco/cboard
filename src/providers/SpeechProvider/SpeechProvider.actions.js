@@ -24,7 +24,6 @@ import {
   filterLocalLangs
 } from '../../i18n';
 import tts from './tts';
-import { showNotification } from '../../components/Notifications/Notifications.actions';
 
 export function requestVoices() {
   return {
@@ -135,17 +134,10 @@ export function getTtsDefaultEngine() {
 }
 
 export function changeVoice(voiceURI, lang) {
-  return (dispatch, getState) => {
-    const isCloud =
-      getState().speech.voices.find(v => v.voiceURI === voiceURI)
-        ?.voiceSource === 'cloud';
-    if (isCloud) dispatch(showNotification('', 'cloudVoiceIsSeted'));
-    dispatch({
-      type: CHANGE_VOICE,
-      voiceURI,
-      lang,
-      isCloud
-    });
+  return {
+    type: CHANGE_VOICE,
+    voiceURI,
+    lang
   };
 }
 
@@ -168,18 +160,6 @@ export function getVoices() {
     let voices = [];
     dispatch(requestVoices());
     try {
-      const localizeSerbianVoicesNames = (voiceName, voiceLang) => {
-        if (voiceLang?.startsWith('sr')) {
-          const getNativeNameOfDialect = lang => {
-            if (lang === 'sr-ME') return 'Crnogorski jezik';
-            if (lang === 'sr-SP') return 'Српски језик';
-            if (lang === 'sr-RS') return 'Srpski jezik';
-          };
-          return `${voiceName} - ${getNativeNameOfDialect(voiceLang)}`;
-        }
-        return voiceName;
-      };
-
       const pvoices = await tts.getVoices();
       // some TTS engines do return invalid voices, so we filter them
       const regex = new RegExp('^[a-zA-Z]{2,}-$', 'g');
@@ -204,7 +184,6 @@ export function getVoices() {
           } else if (DisplayName) {
             voice.name = `${DisplayName} (${voice.lang}) - ${Gender}`;
           }
-          voice.name = localizeSerbianVoicesNames(voice.name, voice.lang);
           return voice;
         }
       );
@@ -239,46 +218,21 @@ export function cancelSpeech() {
       type: CANCEL_SPEECH,
       isSpeaking: false
     });
-    try {
-      tts.cancel();
-    } catch (error) {
-      console.error(error);
-    }
+    tts.cancel();
   };
 }
 
 export function speak(text, onend = () => {}) {
   return (dispatch, getState) => {
     const options = getState().speech.options;
-    const setCloudSpeakAlertTimeout = () => {
-      const REASONABLE_TIME_TO_AWAIT = 5000;
-      return setTimeout(() => {
-        dispatch(showNotification('', 'cloudSpeakError'));
-      }, REASONABLE_TIME_TO_AWAIT);
-    };
     dispatch(startSpeech(text));
 
-    tts.speak(
-      text,
-      {
-        ...options,
-        onend: event => {
-          onend();
-          dispatch(endSpeech());
-          if (event?.error) dispatch(showNotification('', 'cloudSpeakError'));
-        }
-      },
-      setCloudSpeakAlertTimeout
-    );
-  };
-}
-
-export function setCurrentVoiceSource() {
-  return (dispatch, getState) => {
-    const { isCloud = null, voiceURI, lang } = getState().speech.options;
-    if (isCloud === null && !!voiceURI && !!lang) {
-      dispatch(changeVoice(voiceURI, lang));
-      return;
-    }
+    tts.speak(text, {
+      ...options,
+      onend: event => {
+        onend();
+        dispatch(endSpeech());
+      }
+    });
   };
 }

@@ -16,8 +16,7 @@
 
 .EditGridButtons.left {
   top: 55%;
-  left: 6px;
-  max-width: 4rem;
+  left: 0;
 }
 
 .EditGridButtons.right {
@@ -26,8 +25,7 @@
   max-width: 4rem;
 }
 
-.EditGridButtons.right button,
-.EditGridButtons.left button {
+.EditGridButtons.right button {
   min-height: 50px;
   padding-right: 10px;
   padding-left: 10px;

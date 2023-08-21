@@ -11,11 +11,6 @@ import messages from './App.messages';
 import App from './App.component';
 import { DISPLAY_SIZE_STANDARD } from '../Settings/Display/Display.constants';
 
-import {
-  updateUserDataFromAPI,
-  updateLoggedUserLocation,
-  updateUnloggedUserLocation
-} from '../App/App.actions';
 export class AppContainer extends Component {
   constructor(props) {
     super(props);
@@ -47,31 +42,11 @@ export class AppContainer extends Component {
   };
 
   componentDidMount() {
-    const localizeUser = () => {
-      const {
-        isLogged,
-        updateUserDataFromAPI,
-        updateLoggedUserLocation,
-        updateUnloggedUserLocation
-      } = this.props;
-
-      if (isLogged) return loggedActions();
-      return updateUnloggedUserLocation();
-
-      async function loggedActions() {
-        await updateUserDataFromAPI();
-        updateLoggedUserLocation();
-      }
-    };
-
     registerServiceWorker(
       this.handleNewContentAvailable,
       this.handleContentCached
     );
-
     this.messageBus.publish('keepalive', window.cboardSessionId);
-
-    localizeUser();
   }
 
   handleNewContentAvailable = () => {
@@ -131,10 +106,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
-  showNotification,
-  updateUserDataFromAPI,
-  updateLoggedUserLocation,
-  updateUnloggedUserLocation
+  showNotification
 };
 
 export default connect(

@@ -17,10 +17,6 @@ export default defineMessages({
     id: 'cboard.components.WelcomeScreen.google',
     defaultMessage: 'Sign in with Google'
   },
-  apple: {
-    id: 'cboard.components.WelcomeScreen.apple',
-    defaultMessage: 'Sign in with Apple'
-  },
   skipForNow: {
     id: 'cboard.components.WelcomeScreen.skipForNow',
     defaultMessage: 'Skip for now'

@@ -228,8 +228,7 @@ export class OutputContainer extends Component {
   handleOutputClick = event => {
     this.messageBus.publish('keepalive', window.cboardSessionId);
     const targetEl = event.target;
-    const targetElLow = targetEl.tagName.toLowerCase();
-    if (targetElLow === 'div' || targetElLow === 'p') {
+    if (targetEl.tagName.toLowerCase() === 'div') {
       this.play();
     }
   };
@@ -290,12 +289,7 @@ export class OutputContainer extends Component {
   };
 
   render() {
-    const {
-      output,
-      navigationSettings,
-      isLiveMode,
-      increaseOutputButtons
-    } = this.props;
+    const { output, navigationSettings, isLiveMode } = this.props;
     const tabIndex = output.length ? '0' : '-1';
     return (
       <SymbolOutput
@@ -310,7 +304,6 @@ export class OutputContainer extends Component {
         isLiveMode={isLiveMode}
         tabIndex={tabIndex}
         navigationSettings={navigationSettings}
-        increaseOutputButtons={increaseOutputButtons}
         phrase={this.handlePhraseToShare()}
         onWriteSymbol={this.handleWriteSymbol}
       />
@@ -322,8 +315,7 @@ const mapStateToProps = ({ board, app }) => {
   return {
     output: board.output,
     isLiveMode: board.isLiveMode,
-    navigationSettings: app.navigationSettings,
-    increaseOutputButtons: app.displaySettings.increaseOutputButtons
+    navigationSettings: app.navigationSettings
   };
 };
 

@@ -4,7 +4,7 @@ WORKDIR /usr/src/app
 COPY package.json yarn.lock ./
 RUN yarn install
 COPY . ./
-RUN NODE_OPTIONS="--max-old-space-size=4192" yarn build
+RUN yarn build
 
 # Stage 2 - the production environment
 FROM nginx:stable-alpine

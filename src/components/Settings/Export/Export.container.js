@@ -23,6 +23,7 @@ export class ExportContainer extends PureComponent {
   ) => {
     const exportConfig = EXPORT_CONFIG_BY_TYPE[type];
     const EXPORT_HELPERS = await import('./Export.helpers');
+
     if (
       !exportConfig ||
       !exportConfig.callback ||
@@ -37,13 +38,6 @@ export class ExportContainer extends PureComponent {
       await EXPORT_HELPERS.openboardExportAdapter(singleBoard, intl);
     } else if (type === 'cboard') {
       await EXPORT_HELPERS.cboardExportAdapter(boards, singleBoard);
-    } else if (type === 'picsee_pdf') {
-      if (singleBoard) {
-        await EXPORT_HELPERS[exportConfig.callback]([singleBoard], intl, true);
-      } else {
-        const currentBoard = boards.filter(board => board.id === activeBoardId);
-        await EXPORT_HELPERS[exportConfig.callback](currentBoard, intl, true);
-      }
     } else if (type !== 'pdf' && !singleBoard) {
       await EXPORT_HELPERS[exportConfig.callback](boards, intl);
     } else {

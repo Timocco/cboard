@@ -5,6 +5,8 @@ import { Scannable } from 'react-scannable';
 
 import './Scroll.css';
 
+const invertDir = dir => (dir === 'rtl' ? 'ltr' : 'rtl');
+
 export class Scroll extends PureComponent {
   static propTypes = {
     /**
@@ -18,21 +20,23 @@ export class Scroll extends PureComponent {
       children,
       style,
       theme: { direction },
-      scrollContainerReference,
       ...other
     } = this.props;
 
+    const scrollStyle = { direction: invertDir(direction) };
+
     return (
-      <Scannable>
-        <div
-          className="Scroll__container"
-          style={{ ...style, direction }}
-          ref={scrollContainerReference}
-          {...other}
-        >
-          {children}
-        </div>
-      </Scannable>
+      <div className="Scroll" style={scrollStyle}>
+        <Scannable>
+          <div
+            className="Scroll__container"
+            style={{ ...style, direction }}
+            {...other}
+          >
+            {children}
+          </div>
+        </Scannable>
+      </div>
     );
   }
 }
